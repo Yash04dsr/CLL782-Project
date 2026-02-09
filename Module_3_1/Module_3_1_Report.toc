@@ -1,0 +1,12 @@
+\contentsline {section}{\numberline {1}Introduction}{2}{section.1}%
+\contentsline {section}{\numberline {2}Nomenclature}{2}{section.2}%
+\contentsline {section}{\numberline {3}Assumptions and Justifications}{2}{section.3}%
+\contentsline {section}{\numberline {4}Mathematical Model Formulation}{3}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Objective Function Construction}{3}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Sub-Component Integration}{3}{subsection.4.2}%
+\contentsline {section}{\numberline {5}Optimization Analysis}{3}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Unconstrained Optimization of $E$}{3}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Sub-Optimization: Optimal Stall Count}{4}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}Sustainability Efficiency (Part e)}{4}{subsection.5.3}%
+\contentsline {section}{\numberline {6}Preliminary Insights and Discussion}{4}{section.6}%
+\contentsline {section}{\numberline {7}References}{5}{section.7}%
