@@ -31,24 +31,19 @@ TOTAL_CAMPUS_HECTARES = TOTAL_CAMPUS_ACRES * 0.4047  # ~129.5 ha
 # 4. East: Academic Complex, LHC, Main Building, extending to Main Gate.
 
 sub_regions = {
-    "West: SAC + OAT + Nalanda": {
-        "acres": 22.0,
-        "description": "Student Activity Centre, Nalanda Grounds, and Parking area. Major event hub.",
-        "type": "event_venue"
+    "West Zone: Nalanda + SAC + OAT": {
+        "acres": 25.0,
+        "description": "Solid block enclosing Nalanda, SAC, and OAT.",
+        "type": "event_venue_west"
     },
-    "Center: Sports Complex": {
-        "acres": 28.0,
-        "description": "Cricket Ground, Indoor Sports, Play Ground. Large open area.",
-        "type": "open_ground"
+    "East Zone: Sports + Academic + Rose Garden": {
+        "acres": 52.0,
+        "description": "Consolidated block: Sports Complex, Main Grounds, Academic Core, Rose Garden.",
+        "type": "event_venue_east"
     },
-    "East: Academic Core + Rose Garden": {
-        "acres": 30.0,
-        "description": "Main Building, Library, LHC, Block 99C, Rose Garden.",
-        "type": "academic_green"
-    },
-    "Pathways & Circulation": {
+    "Internal Pathways": {
         "acres": 5.0,
-        "description": "Internal roads connecting the zones.",
+        "description": "Connecting corridors within the dark region.",
         "type": "circulation"
     }
 }
@@ -91,28 +86,26 @@ map_path = "/Users/yash/Desktop/CLL788 Project/iitd-campus-map.jpg"
 img = Image.open(map_path)
 W, H = img.size
 
-# Refined Polygon Vertices (Traced from User Attachment - Step 266)
-# West: Encloses Nalanda, OAT, SAC.
-# Connector: South of Hospital, North of Residences.
-# Center: Main Grounds, Indoor Sports.
-# East: Loop around Library, Main Bldg, Rose Garden, Block 99C, LHC.
+# Refined Polygon Vertices (Traced from 'Dark Confined Region' User Attachment - Step 307)
+# West: Solid block around Nalanda/SAC.
+# East: Solid block around Sports/Academic/LHC/Rose Garden.
+# Connected by the neck south of Hospital.
 
 roi_polygon = [
-    (450, 680),   # Nalanda Top-Left (North of Nalanda)
-    (450, 980),   # OAT Bottom-Left (South of OAT)
-    (900, 1020),  # SAC South-East
-    (1400, 1050), # South of Main Grounds
-    (1700, 1050), # South of Indoor Sports
-    (2100, 950),  # South of LHC / Block 99B
-    (2250, 850),  # South-East of Block 99C
-    (2300, 600),  # East of Rose Garden
-    (2200, 400),  # North of Rose Garden
-    (1950, 450),  # North of Main Building
-    (1750, 550),  # North of Library
-    (1450, 780),  # North of Main Grounds (South of Academic)
-    (1250, 800),  # Neck (South of Hospital)
-    (900, 780),   # North of SAC
-    (450, 680),   # Back to Start
+    (460, 700),   # West Block NW (Nalanda)
+    (460, 1050),  # West Block SW (OAT)
+    (1000, 1080), # West Block SE (SAC)
+    (1250, 1080), # Connector Bottom
+    (1450, 1100), # Main Grounds SW
+    (2100, 1000), # LHC South
+    (2250, 850),  # Block 99C SE
+    (2300, 550),  # Rose Garden East
+    (2200, 400),  # Rose Garden North
+    (1900, 380),  # Main Building North
+    (1650, 550),  # Library North
+    (1300, 780),  # Connector Top
+    (950, 780),   # SAC North
+    (460, 700),   # Close Loop
 ]
 
 # Draw semi-transparent ROI overlay
@@ -179,10 +172,9 @@ print(f"""
 \\begin{{tabular}}{{@{{}}llcc@{{}}}}
 \\toprule
 \\textbf{{Zone}} & \\textbf{{Description}} & \\textbf{{Area (ac)}} & \\textbf{{Type}} \\\\ \\midrule
-West & SAC, OAT, Nalanda, Parking & {sub_regions['West: SAC + OAT + Nalanda']['acres']:.0f} & Event Venue \\\\
-Center & Sports Complex (Indoor/Outdoor) & {sub_regions['Center: Sports Complex']['acres']:.0f} & Open Ground \\\\
-East & Academic Core, LHC to Main Gate & {sub_regions['East: Academic Core + Rose Garden']['acres']:.0f} & Academic \\\\
-Circulation & Connecting Pathways & {sub_regions['Pathways & Circulation']['acres']:.0f} & Roads \\\\
+West & Nalanda, SAC, OAT Block & {sub_regions['West Zone: Nalanda + SAC + OAT']['acres']:.0f} & Event Venue \\\\
+East & Sports, Academic, Rose Garden Block & {sub_regions['East Zone: Sports + Academic + Rose Garden']['acres']:.0f} & Main Festival Zone \\\\
+Circulation & Internal Corridors & {sub_regions['Internal Pathways']['acres']:.0f} & Circulation \\\\
 \\midrule
   & \\textbf{{Total ROI}} & \\textbf{{{total_roi_acres:.0f}}} & --- \\\\
 \\bottomrule
