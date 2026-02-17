@@ -1,6 +1,6 @@
 \beamer@sectionintoc {1}{1. The Genesis \& Vision}{3}{0}{1}
 \beamer@sectionintoc {2}{2. Module 3.1: Environmental Load}{5}{0}{2}
-\beamer@sectionintoc {3}{3. Module 3.2: Dustbin Placement (FLP)}{7}{0}{3}
-\beamer@sectionintoc {4}{4. Module 3.3: Waste Logistics}{9}{0}{4}
-\beamer@sectionintoc {5}{5. Module 3.4: Water Refill Stations}{11}{0}{5}
-\beamer@sectionintoc {6}{Conclusion}{13}{0}{6}
+\beamer@sectionintoc {3}{3. Module 3.2: Dustbin Placement (FLP)}{9}{0}{3}
+\beamer@sectionintoc {4}{4. Module 3.3: Waste Collection Logistics}{13}{0}{4}
+\beamer@sectionintoc {5}{5. Module 3.4: Water Refill Stations}{17}{0}{5}
+\beamer@sectionintoc {6}{Conclusion}{21}{0}{6}
