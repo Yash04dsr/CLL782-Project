@@ -69,77 +69,106 @@
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{1. Introduction \& Scope}
+\section{1. The Genesis \& Vision}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{frame}{The Challenge: Greening Asia's Largest Fest}
+\begin{frame}{The Genesis: From Biodiversity to Urban Chaos}
     \begin{columns}[T]
-        \begin{column}{0.55\textwidth}
-            \begin{block}{Context}
+        \begin{column}{0.6\textwidth}
+            \begin{block}{The Inspiration}
+                Sanskruti, General Secretary (Cultural Affairs), hails from the biodiverse landscapes of West Champaran.
                 \begin{itemize}
-                    \item \textbf{Rendezvous (IIT Delhi)}: $\sim$160,000 attendees over 4 days.
-                    \item \textbf{Problem}: Massive environmental footprint (Waste, Energy, Carbon).
-                    \item \textbf{Goal}: Use Process Optimization to model and minimize this Environmental Load ($E$).
+                    \item \textbf{Observation}: Urban life offers convenience but at a massive, silent environmental cost.
+                    \item \textbf{The Trigger}: "Rendezvous" (Asia's Largest Fest) generates tons of waste, acting as a microcosm of this urban un-sustainability.
                 \end{itemize}
             \end{block}
-
-            \begin{alertblock}{Scope: High-Intensity Zone}
-                \begin{itemize}
-                    \item \textbf{Area}: $\sim$82-90 Acres (26\% of Campus).
-                    \item \textbf{Locations}: OAT, Nalanda, SAC, LHC, Red Square.
-                    \item \textbf{Footfall}: Captures 90\% of event intensity.
-                \end{itemize}
+            
+            \begin{alertblock}{The Vision}
+                \textit{"Sustainability is not about restriction, but about acting responsibly and optimizing resources."}
+                
+                Transform Rendezvous from a logistical challenge into a \textbf{Model of Sustainability}.
             \end{alertblock}
         \end{column}
+        
+        \begin{column}{0.35\textwidth}
+            \begin{exampleblock}{The Objective}
+                Use \textbf{Systems Engineering \& Optimization} to:
+                \begin{enumerate}
+                    \item Quantify Impact.
+                    \item Optimize Infrastructure.
+                    \item Minimize Waste.
+                \end{enumerate}
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
 
+\begin{frame}{Scope: The High-Intensity Zone}
+    \begin{columns}[T]
+        \begin{column}{0.55\textwidth}
+            To ensure impact, we focus on the festival's core activity hub.
+            
+            \begin{table}
+                \centering\small
+                \begin{tabular}{l l}
+                    \toprule
+                    \textbf{Parameter} & \textbf{Value} \\ \midrule
+                    \textbf{Total Campus} & 320 Acres \\
+                    \textbf{Target ROI Area} & \textbf{82 Acres} (26\%) \\
+                    \textbf{Key Venues} & OAT, Nalanda, SAC, LHC \\
+                    \textbf{Peak Footfall} & $\sim$40,000 / day \\
+                    \textbf{Grid System} & 137 Cells (0.6 acres each) \\
+                    \bottomrule
+                \end{tabular}
+            \end{table}
+        \end{column}
         \begin{column}{0.40\textwidth}
             \centering
-            % Placeholder for map if available, or text
-            \includegraphics[width=0.95\textwidth]{../Module_3_1/iitd_roi_grid_map.jpg} \\
-            \scriptsize{Target ROI: 82 Acres, 137 Grid Cells}
+             \includegraphics[width=0.95\textwidth]{../Module_3_1/iitd_roi_grid_map.jpg} \\
+             \tiny{Figure: ROI with 137 Grid Cells}
         \end{column}
     \end{columns}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{2. Module 3.1: Environmental Load Modeling}
+\section{2. Module 3.1: Environmental Load}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{frame}{3.1 Problem Statement \& Methodology}
-    \textbf{Problem:} Develop a mathematical function to Quantify Total Environmental Load ($E$).
-
-    \vspace{0.3cm}
-    \begin{block}{Key Variables}
-        \begin{tabular}{l l l l}
-            \textbf{Sym} & \textbf{Description} & \textbf{Type} & \textbf{Value/Range} \\
-            \midrule
-            $N$ & Number of Attendees & Demand & 160,000 (Total) \\
-            $S$ & Number of Stalls & Decision & $100 - 300$ \\
-            $A$ & Activity Hours & Decision & 4 Days $\times$ 12 hrs \\
-        \end{tabular}
-    \end{block}
+\begin{frame}{3.1 Problem Statement \& Variables}
+    \textbf{Problem:} Develop a mathematical function $E(N, S, A)$ to quantify total environmental load, capturing non-linear "crowding" and "congestion" effects.
 
     \vspace{0.2cm}
-    \textbf{Assumed Constants (Ref: Literature/IITD Data):}
-    \begin{itemize}
-        \item Base Impact $\alpha_1$: 2.5 kg CO$_2$/person.
-        \item Stall Impact $\alpha_2$: 18 kg CO$_2$/stall (Embodied).
-        \item Congestion Penalty $\gamma_{NS}$: 0.0005 (Waste leakage factor).
-    \end{itemize}
+    \begin{table}
+        \caption{Module 3.1 Variable Definitions}
+        \centering\footnotesize
+        \begin{tabular}{l l l l}
+            \toprule
+            \textbf{Sym} & \textbf{Description} & \textbf{Unit} & \textbf{Type} \\ \midrule
+            $N$ & Number of Attendees & Persons & Parameter (Demand) \\
+            $S$ & Number of Food Stalls & Stalls & \textbf{Decision Variable} \\
+            $A$ & Activity Duration & Hours & Decision Variable \\
+            $\alpha_2$ & Stall Embodied Impact & kg CO$_2$/stall & Constant (18.0) \\
+            $\gamma_{NS}$ & Congestion Penalty & - & Constant (0.0005) \\
+            $E$ & \textbf{Total Env Load} & kg CO$_2$-eq & \textbf{Objective} \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
 \end{frame}
 
-\begin{frame}{3.1 Formulation \& Results}
-    \begin{alertblock}{Objective Function: Minimize Load $E$}
-        $$ E = \underbrace{(\alpha_1 N + \alpha_2 S)}_{\text{Base}} + \underbrace{(\beta_N N^{1.3})}_{\text{Non-linear Scale}} + \underbrace{\left( \gamma_{NS} \frac{N^2}{S} \right)}_{\text{Congestion Penalty}} $$
+\begin{frame}{3.1 Formulation \& Insights}
+    \begin{alertblock}{Objective Function}
+        $$ E = \underbrace{(\alpha_1 N + \alpha_2 S)}_{\text{Base Load}} + \underbrace{(\beta_N N^{1.3})}_{\text{Non-linear Scale}} + \underbrace{\left( \gamma_{NS} \frac{N^2}{S} \right)}_{\text{Congestion Penalty}} $$
     \end{alertblock}
-    
-    \vspace{0.3cm}
-    \textbf{Preliminary Insight:}
+
     \begin{itemize}
-        \item The term $N^2/S$ represents littering caused by overcrowding/queues.
-        \item \textbf{Optimization}: $\frac{dE}{dS} = 0 \implies S^* = N \sqrt{\frac{\gamma_{NS}}{\alpha_2}}$
-        \item For $N=40,000$/day, $\alpha_2=18$, $\gamma_{NS}=0.0005$ $\rightarrow$ \textbf{$S^* \approx 210$ Stalls}.
-        \item \textit{Current scenario ($\sim$100 stalls) is suboptimal due to high congestion penalty.}
+        \item \textbf{Trade-off}: 
+            \begin{itemize}
+                \item Too few stalls ($S \downarrow$) $\rightarrow$ High Congestion ($N^2/S \uparrow$) $\rightarrow$ Littering.
+                \item Too many stalls ($S \uparrow$) $\rightarrow$ High Embodied Energy ($\alpha_2 S \uparrow$).
+            \end{itemize}
+        \item \textbf{Analytical Solution}:
+            $$ \frac{dE}{dS} = \alpha_2 - \gamma_{NS} \frac{N^2}{S^2} = 0 \implies S^* = N \sqrt{\frac{\gamma_{NS}}{\alpha_2}} $$
+        \item \textbf{Result}: For $N=40,000$, $S^* \approx \textbf{210 Stalls}$. (Current practice is suboptimal).
     \end{itemize}
 \end{frame}
 
@@ -148,73 +177,76 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}{3.2 Problem Statement \& Variables}
-    \textbf{Problem:} Optimal placement of dustbins to minimize user inconvenience (walking distance) and littering.
-    
-    \begin{block}{Variable Description}
-        \begin{itemize}
-            \item $i$: Demand Zones (Grid Cells).
-            \item $j$: Candidate Bin Locations.
-            \item $y_{j,t} \in \{0,1\}$: Binary decision to install bin type $t$ at loc $j$.
-            \item $a_{i,j,t} \in [0,1]$: Fraction of demand from $i$ assigned to $j$.
-        \end{itemize}
-    \end{block}
+    \textbf{Problem:} Optimally place dustbins ($j$) to cover demand zones ($i$) such that walking distance is minimized, subject to service radius ($R_t$).
 
-    \textbf{Constants:}
-    \begin{itemize}
-        \item \textbf{Waste Rate ($w$)}: 0.15 kg/person/visit (Food fest norm).
-        \item \textbf{Service Radius ($R_t$)}: 30m (High Intensity) to 50m (Pathways).
-        \item \textbf{Bin Capacity ($K_t$)}: 20-30 kg (Dual FRP Bins).
-    \end{itemize}
+    \vspace{0.2cm}
+    \begin{table}
+        \centering\footnotesize
+        \begin{tabular}{l l l l}
+            \toprule
+            \textbf{Sym} & \textbf{Description} & \textbf{Unit} & \textbf{Type} \\ \midrule
+            $i$ & Index of Demand Zone & - & Index ($1 \dots 137$) \\
+            $j$ & Candidate Location & - & Index \\
+            $y_{j,t}$ & Install Bin type $t$ at $j$? & $\{0,1\}$ & \textbf{Binary Decision} \\
+            $a_{i,j,t}$ & Fraction demand $i \to j$& $[0,1]$ & Continuous Decision \\
+            $F_i$ & Footfall at Zone $i$ & Ppl/hr & Parameter \\
+            $R_t$ & Service Radius & m & Const (30-50m) \\
+            $K_t$ & Bin Capacity & kg & Const (30kg) \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
 \end{frame}
 
 \begin{frame}{3.2 Mathematical Formulation}
-    \begin{exampleblock}{Objective: Minimize Total Inconvenience $Z$}
+    \begin{exampleblock}{Minimize User Inconvenience (Weighted Distance)}
         $$ \text{Min } Z = \sum_{i} \sum_{j} \sum_{t} \left( F_i \cdot a_{i,j,t} \cdot D_{ij} \right) $$
     \end{exampleblock}
 
     \textbf{Subject to Constraints:}
+    \vspace{0.2cm}
     \begin{enumerate}
-        \item \textbf{Coverage}: $\sum_{j,t} a_{i,j,t} = 1$ (All waste must be collected).
-        \item \textbf{Capacity}: $\sum_{i} (F_i \cdot w \cdot a_{i,j,t}) \le K_t \cdot y_{j,t}$ (Bins can't overflow).
-        \item \textbf{Radius (Accessibility)}: $a_{i,j,t} = 0$ if $D_{ij} > R_t$.
-        \item \textbf{Budget}: $\sum_{j,t} C_t \cdot y_{j,t} \le B$.
+        \item \textbf{Coverage Requirement}: $\sum_{j,t} a_{i,j,t} = 1 \quad \forall i$
+        \item \textbf{Capacity Limit}: $\sum_{i} (F_i \cdot w \cdot a_{i,j,t}) \le K_t \cdot y_{j,t} \quad \forall j,t$
+        \item \textbf{Service Radius}: $a_{i,j,t} = 0 \quad \text{if } D_{ij} > R_t$
+        \item \textbf{Logical Link}: $a_{i,j,t} \le y_{j,t}$
     \end{enumerate}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{4. Module 3.3: Waste Logistics (Network Flow)}
+\section{4. Module 3.3: Waste Logistics}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{frame}{3.3 Problem Statement \& Hierarchy}
-    \textbf{Problem:} Design a logicstics network to transport 6,000 kg/day of waste from zones to processing units.
-    
-    \vspace{0.2cm}
-    \textbf{System Components:}
-    \begin{itemize}
-        \item \textbf{Sources ($i$)}: 90-acre ROI zones.
-        \item \textbf{Sinks ($j$)}: Biogas (On-campus), Okhla Landfill, Recyclers.
-        \item \textbf{Vehicles ($k$)}: Small Tippers (Tata Ace EV).
-    \end{itemize}
+\begin{frame}{3.3 Problem Statement \& Variables}
+    \textbf{Problem:} Design a logistics network to clear 6 tons of waste/day using a fleet of vehicle ($k$) from zones ($i$) to facilities ($j$).
 
-    \begin{block}{Parameters \& Constants}
-        \begin{itemize}
-            \item \textbf{Vehicle Capacity ($V_{cap}$)}: 750 kg.
-            \item \textbf{Fixed Cost ($C_{fixed}$)}: Rs.800/vehicle/day.
-            \item \textbf{Variable Cost}: Rs.20/km.
-        \end{itemize}
-    \end{block}
+    \vspace{0.2cm}
+    \begin{table}
+        \centering\footnotesize
+        \begin{tabular}{l l l l}
+            \toprule
+            \textbf{Sym} & \textbf{Description} & \textbf{Unit} & \textbf{Type} \\ \midrule
+            $x_{i,j}$ & Waste Flow $i \to j$ & kg & \textbf{Continuous Decision} \\
+            $v_k$ & Vehicle $k$ Deployed? & $\{0,1\}$ & Binary Decision \\
+            $V_{cap}$ & Vehicle Payload & kg & Const (750 kg) \\
+            $C_{dist}$ & Transport Cost & Rs/km & Const (Rs. 20) \\
+            $C_{proc}$ & Processing Cost & Rs/kg & Const (Facility dep.) \\
+            $C_{fix}$ & Vehicle Fixed Cost & Rs/day & Const (Rs. 800) \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
 \end{frame}
 
 \begin{frame}{3.3 Formulation (Min Cost Flow)}
-    \begin{alertblock}{Objective: Minimize Total Logistics Cost}
-        $$ \text{Min } Z = \underbrace{\sum_{i,j} x_{i,j} (C_{dist} D_{ij} + C_{proc,j})}_{\text{Variable Cost}} + \underbrace{C_{fixed} \cdot \left\lceil \frac{\sum x_{i,j}}{V_{cap}} \right\rceil}_{\text{Fixed Fleet Cost}} $$
+    \begin{alertblock}{Minimize Total System Cost}
+        $$ \text{Min } Z = \underbrace{\sum_{i,j} x_{i,j} (C_{dist} D_{ij} + C_{proc,j})}_{\text{Var Cost}} + \underbrace{C_{fix} \cdot \sum_k v_k}_{\text{Fixed Fleet Cost}} $$
     \end{alertblock}
 
-    \textbf{Constraints:}
+    \textbf{Subject to Constraints:}
+    \vspace{0.2cm}
     \begin{enumerate}
-        \item \textbf{Supply}: $\sum_j x_{i,j} = \text{Waste Generated}_i$.
-        \item \textbf{Throughput}: $\sum_i x_{i,j} \le \text{Capacity}_j$ (e.g., Biogas limit).
-        \item \textbf{Fleet}: Total volume $\le$ Number of vehicles $\times V_{cap}$.
+        \item \textbf{Waste Clearance}: $\sum_j x_{i,j} = \text{Total Waste}_i \quad \forall i$
+        \item \textbf{Processing Limit}: $\sum_i x_{i,j} \le \text{Capacity}_j \quad \forall j$
+        \item \textbf{Fleet Capacity}: $\sum_{i,j} x_{i,j} \le V_{cap} \cdot \sum_k v_k$
     \end{enumerate}
 \end{frame}
 
@@ -222,58 +254,58 @@
 \section{5. Module 3.4: Water Refill Stations}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{frame}{3.4 Problem Statement \& Setup}
-    \textbf{Problem:} Plan water refill stations to support reusable bottle policy (Zero Plastic).
-    
-    \begin{block}{Variables}
-        \begin{itemize}
-            \item $y_j \in \{0, 1\}$: Install Station at location $j$?
-            \item $x_{i,j} \in [0, 1]$: Fraction of demand satisfied by $j$.
-        \end{itemize}
-    \end{block}
+\begin{frame}{3.4 Problem Statement \& Variables}
+    \textbf{Problem:} Locate water stations (Capacitated P-Median) to minimize total cost (Installation + Walking), enabling value recovery via reusable bottles.
 
-    \textbf{Assumptions \& Constants:}
-    \begin{itemize}
-        \item \textbf{Demand ($d_i$)}: 0.25 L/hr/person $\rightarrow$ 10,000 LPH Peak.
-        \item \textbf{Station Capacity}: 250 LPH (Cooling rate bottleneck).
-        \item \textbf{Cost of Walking ($C_{walk}$)}: Rs.0.02 per meter (Time value).
-        \item \textbf{Install Cost ($f_j$)}: Rs.1,00,000 (RO + Cooling).
-    \end{itemize}
+    \vspace{0.2cm}
+    \begin{table}
+        \centering\footnotesize
+        \begin{tabular}{l l l l}
+            \toprule
+            \textbf{Sym} & \textbf{Description} & \textbf{Unit} & \textbf{Type} \\ \midrule
+            $y_j$ & Install Station at $j$? & $\{0,1\}$ & \textbf{Binary Decision} \\
+            $x_{i,j}$ & Assign $i \to j$ & $[0,1]$ & Decision Variable \\
+            $d_i$ & Water Demand & L/hr & Parameter \\
+            $f_j$ & Install Cost & Rs. & Const (Rs. 1 Lakh) \\
+            $C_{walk}$ & Walking Cost & Rs/m & Const (Rs. 0.02) \\
+            $Cap_j$ & Station Capacity & L/hr & Const (250 LPH) \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
 \end{frame}
 
-\begin{frame}{3.4 Formulation (Capacitated P-Median)}
-    \begin{exampleblock}{Objective: Min Generalized Cost}
-        $$ \text{Min } Z = \underbrace{\sum_{j} f_j y_j}_{\text{Installation Cost}} + \underbrace{\sum_{i,j} (d_i x_{i,j}) D_{ij} C_{walk}}_{\text{User Inconvenience Cost}} $$
+\begin{frame}{3.4 Formulation (P-Median Variant)}
+    \begin{exampleblock}{Minimize Generalized Cost}
+        $$ \text{Min } Z = \underbrace{\sum_{j} f_j y_j}_{\text{CAPEX}} + \underbrace{\sum_{i,j} (d_i x_{i,j}) D_{ij} C_{walk}}_{\text{User Inconvenience}} $$
     \end{exampleblock}
 
-    \textbf{Key Constraints:}
-    \begin{enumerate}
-        \item \textbf{Demand Met}: $\sum_j x_{i,j} = 1$.
-        \item \textbf{Capacity}: $\sum_i d_i x_{i,j} \le \text{Cap}_j \cdot y_j$.
-        \item \textbf{Logical}: User can only go to $j$ if $y_j=1$.
-    \end{enumerate}
-    
+    \textbf{Subject to Constraints:}
     \vspace{0.2cm}
-    \textit{Trade-off: More stations = Higher Install Cost vs. Less User Walking.}
+    \begin{enumerate}
+        \item \textbf{Service Guarantee}: $\sum_j x_{i,j} = 1 \quad \forall i$
+        \item \textbf{Capacity}: $\sum_i d_i x_{i,j} \le Cap_j \cdot y_j \quad \forall j$
+        \item \textbf{Integrality}: $y_j \in \{0, 1\}$
+    \end{enumerate}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusion}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{frame}{Conclusion}
-    \begin{block}{Integrated Sustainability Strategy}
+\begin{frame}{Conclusion: The Sustainable Blueprint}
+    \begin{block}{Integrated Design}
+        Our system-level optimization transforms Rendezvous:
         \begin{enumerate}
-            \item \textbf{Mod 3.1}: Optimize Scale ($S^* \approx 210$) to reduce congestion-led waste.
-            \item \textbf{Mod 3.2}: Place Bins within 30m radius to capture waste at source.
-            \item \textbf{Mod 3.3}: Efficient Logistics routing to minimize transport carbon.
-            \item \textbf{Mod 3.4}: Strategic Water Stations to eliminate plastic bottles.
+            \item \textbf{Right-Sizing}: $S \to 210$ to cut congestion waste.
+            \item \textbf{Precision}: 30m bin grid ensures zero littering.
+            \item \textbf{Efficiency}: Optimized fleet routing cuts transport emissions.
+            \item \textbf{Innovation}: Water stations replace plastic bottles.
         \end{enumerate}
     \end{block}
     
     \centering
     \vspace{0.5cm}
-    \LARGE \textbf{Technological Optimism + Process Optimization \\ = Greener Rendezvous}
+    \LARGE \textbf{Technological Optimism + Optimization \\ = A Greener Future}
 \end{frame}
 
 \begin{frame}[plain]
@@ -281,8 +313,7 @@
     \begin{center}
         {\Huge \textcolor{DarkNavy}{Thank You}} \\
         \vspace{1cm}
-        \small Open Loop: Optimizing "Rendezvous" \\
-        \small Dept of Chemical Engineering, IIT Delhi
+        \small "Just like Mother Nature, we optimize continuously."
     \end{center}
     \vfill
 \end{frame}
