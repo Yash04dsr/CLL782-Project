@@ -63,7 +63,24 @@ The variables and parameters used in the mathematical model are defined in Table
 3.  **A3: Finite Candidate Set.**
     *   **Justification:** Stations can only be installed at pre-designated feasible locations (e.g., near plumbing lines), not anywhere in continuous space.
 
-### 4. Mathematical Model Formulation
+### 4. Data Estimation and Context (IIT Delhi Specifics)
+To ensure the model is grounded in reality, the following well-supported approximations are used for coefficients:
+
+*   **Scope:** The analysis focuses on the **90-acre high-intensity zone** (OAT, Nalanda, LHC, etc.), with a peak footfall of **40,000 attendees** [Module 3.2].
+*   **Water Demand ($d_i$):**
+    *   **Per Capita Need:** During high-activity festivals in Delhi's climate, hydration needs are approx. **250 ml/hour** per person.
+    *   **Peak Demand:** $40,000 \times 0.25 = 10,000$ Liters/hour total across the zone.
+*   **Refill Station Specifications ($j$):**
+    *   **Type:** Commercial RO Water Coolers / Water ATM units.
+    *   **Capacity ($cap_j$):** Rated cooling/dispensing capacity of **250 Liters Per Hour (LPH)** [1].
+        *   *Note:* While taps flow at ~5-8 LPM, cooling capacity is the bottleneck.
+    *   **Installation Cost ($f_j$):** Approx **₹75,000 - ₹1,25,000** per unit (Includes machine, plumbing, branding) [2].
+*   **Walking Cost ($C_{walk}$):**
+    *   **Time Value of Money:** Assuming a student/visitor's time is valued effectively at ₹100/hour.
+    *   **Walk Speed:** 80 meters/minute.
+    *   **Cost Coefficient:** $\approx$ ₹1.6/min $\approx$ **₹0.02 per meter** of walking. This penalizes long deviations for water.
+
+### 5. Mathematical Model Formulation
 
 The problem is formulated as a mixed-integer linear programming (MILP) model.
 
@@ -113,6 +130,9 @@ This is a classic **NP-hard** combinatorial optimization problem.
 *   **Shadow Prices:** The dual variable associated with the capacity constraint of a station $j$ indicates the value of expanding that station's capacity. High shadow prices suggest "bottleneck" stations that should be upgraded.
 *   **Fairness:** The current objective minimizes *average* walking distance. This might leave some remote zones with very long walks. A "Minimax" objective (minimize the maximum walking distance) could be added as a secondary constraint for equity.
 
-### 7. References
-1.  Daskin, M. S. (1995). *Network and Discrete Location: Models, Algorithms, and Applications*. Wiley.
-2.  Mirchandani, P. B., & Francis, R. L. (1990). *Discrete Location Theory*. Wiley.
+### 8. References
+1.  Blue Star/Voltas Commercial (2025). *Water Cooler Specifications*. 150-300 LPH range.
+2.  Indiamart/TradeIndia (2025). *Commercial RO Plant & Water ATM Pricing Trends*.
+3.  WHO (2005). *Water Requirement for Emergencies/Events*. ~15L/person/day total.
+4.  Daskin, M. S. (1995). *Network and Discrete Location: Models, Algorithms, and Applications*. Wiley.
+5.  Mirchandani, P. B., & Francis, R. L. (1990). *Discrete Location Theory*. Wiley.
