@@ -1,9 +1,9 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.11.16)  10 FEB 2026 01:12
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.11.16)  17 FEB 2026 22:16
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**Module_3_1/Module_3_1_Report.tex
-(./Module_3_1/Module_3_1_Report.tex
+**Module_3_1_Report.tex
+(./Module_3_1_Report.tex
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
 (/usr/local/texlive/2025basic/texmf-dist/tex/latex/base/article.cls
@@ -392,7 +392,7 @@ ef
 File: l3backend-pdftex.def 2024-05-08 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count304
 \l__pdf_internal_box=\box57
-) (Module_3_1/Module_3_1_Report.aux)
+) (./Module_3_1_Report.aux)
 \openout1 = `Module_3_1_Report.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 26.
@@ -473,7 +473,7 @@ File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
 Package hyperref Info: Link coloring OFF on input line 26.
- (Module_3_1/Module_3_1_Report.out) (Module_3_1/Module_3_1_Report.out)
+ (./Module_3_1_Report.out) (./Module_3_1_Report.out)
 \@outlinefile=\write3
 \openout3 = `Module_3_1_Report.out'.
 
@@ -489,7 +489,7 @@ LaTeX Font Info:    Trying to load font information for U+msb on input line 29.
 (/usr/local/texlive/2025basic/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-(Module_3_1/Module_3_1_Report.toc)
+(./Module_3_1_Report.toc)
 \tf@toc=\write4
 \openout4 = `Module_3_1_Report.toc'.
 
@@ -498,7 +498,7 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 [1
 
 {/usr/local/texlive/2025basic/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-Overfull \hbox (6.79216pt too wide) in paragraph at lines 62--79
+Overfull \hbox (3.933pt too wide) in paragraph at lines 62--86
  [][] 
  []
 
@@ -513,12 +513,15 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [2]
 
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 132.
+LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 132.
+Overfull \hbox (12.18127pt too wide) in paragraph at lines 175--176
+[]\OT1/cmr/bx/n/10.95 Key Ob-ser-va-tion\OT1/cmr/m/n/10.95 : With these val-ues
+, the con-ges-tion term $\OML/cmm/m/it/10.95 ^^M[]N[]=S \OT1/cmr/m/n/10.95 = 0\
+OML/cmm/m/it/10.95 :\OT1/cmr/m/n/10.95 0005 \OMS/cmsy/m/n/10.95 ^^B \OT1/cmr/m/
+n/10.95 40000[]\OML/cmm/m/it/10.95 =\OT1/cmr/m/n/10.95 100 =
+ []
 
 
 
@@ -530,11 +533,16 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
 [3]
-Overfull \hbox (14.76909pt too wide) in paragraph at lines 183--184
-[]\OT1/cmr/bx/n/10.95 Critical Ra-tio\OT1/cmr/m/n/10.95 : The anal-y-sis re-vea
-ls a crit-i-cal Attendee-to-Stall ra-tio ($\OML/cmm/m/it/10.95 N=S\OT1/cmr/m/n/
-10.95 )[] = []$.
- []
+
+LaTeX Warning: Reference `tab:roi' on page 4 undefined on input line 180.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 202.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 202.
 
 
 
@@ -554,22 +562,51 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                You might also make \topmargin smaller:
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
-[5] (Module_3_1/Module_3_1_Report.aux)
+[5]
+Overfull \hbox (14.76909pt too wide) in paragraph at lines 253--254
+[]\OT1/cmr/bx/n/10.95 Critical Ra-tio\OT1/cmr/m/n/10.95 : The anal-y-sis re-vea
+ls a crit-i-cal Attendee-to-Stall ra-tio ($\OML/cmm/m/it/10.95 N=S\OT1/cmr/m/n/
+10.95 )[] = []$.
+ []
+
+
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[6] (./Module_3_1_Report.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
  ***********
-Package rerunfilecheck Info: File `Module_3_1_Report.out' has not changed.
-(rerunfilecheck)             Checksum: 22537B766A93C3ABBBF185379B629AFF;2195.
+
+
+LaTeX Warning: There were undefined references.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+
+Package rerunfilecheck Warning: File `Module_3_1_Report.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `Module_3_1_Report.out':
+(rerunfilecheck)             Before: 913118A63893DC9E6C03CCFB9367AFDB;2404
+(rerunfilecheck)             After:  8A126928EF64AEE2111388FF6CDE371D;2606.
  ) 
 Here is how much of TeX's memory you used:
- 11711 strings out of 474662
- 180289 string characters out of 5751108
- 597613 words of memory out of 5000000
- 34560 multiletter control sequences out of 15000+600000
- 567543 words of font info for 68 fonts, out of 8000000 for 9000
+ 11748 strings out of 474662
+ 180675 string characters out of 5751108
+ 603008 words of memory out of 5000000
+ 34585 multiletter control sequences out of 15000+600000
+ 569896 words of font info for 78 fonts, out of 8000000 for 9000
  319 hyphenation exceptions out of 8191
- 75i,12n,79p,565b,583s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,12n,79p,554b,579s stack positions out of 10000i,1000n,20000p,200000b,200000s
  </Users/yash/Library/texlive/2025basic/texmf-var/fonts/pk/ljfour/jknappen/ec
 /tcrm1095.600pk></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public/ams
 fonts/cm/cmbx10.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public
@@ -577,18 +614,21 @@ fonts/cm/cmbx10.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type1/public
 blic/amsfonts/cm/cmex10.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/type
 1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2025basic/texmf-dist/fonts/
 type1/public/amsfonts/cm/cmmi12.pfb></usr/local/texlive/2025basic/texmf-dist/fo
-nts/type1/public/amsfonts/cm/cmmi8.pfb></usr/local/texlive/2025basic/texmf-dist
-/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2025basic/texmf-d
-ist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2025basic/texm
-f-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/local/texlive/2025basic/te
-xmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2025basic/
-texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2025ba
-sic/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texlive/202
-5basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb>
-Output written on Module_3_1/Module_3_1_Report.pdf (5 pages, 187330 bytes).
+nts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texlive/2025basic/texmf-dist
+/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/local/texlive/2025basic/texmf-d
+ist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2025basic/texm
+f-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2025basic/t
+exmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/local/texlive/2025basic
+/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2025bas
+ic/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2025b
+asic/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2
+025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/texliv
+e/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/tex
+live/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb>
+Output written on Module_3_1_Report.pdf (6 pages, 227196 bytes).
 PDF statistics:
- 196 PDF objects out of 1000 (max. 8388607)
- 160 compressed objects within 2 object streams
- 42 named destinations out of 1000 (max. 500000)
+ 248 PDF objects out of 1000 (max. 8388607)
+ 204 compressed objects within 3 object streams
+ 53 named destinations out of 1000 (max. 500000)
  97 words of extra memory for PDF output out of 10000 (max. 10000000)
 
