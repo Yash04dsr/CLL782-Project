@@ -175,24 +175,23 @@ $k_{crowd}$ & 0.002 & Waste $\times$1.75 at $N/S \approx 400$ & \cite{agf2022} \
 \textbf{Key Observation}: With these values, the congestion term $\gamma_{NS} N^2/S = 0.0005 \times 40000^2 / 100 = 8{,}000$ kg CO$_2$-eq dominates the environmental load at full capacity, underscoring the critical importance of sufficient stall infrastructure. The optimal stall count $S^* \approx N\sqrt{\gamma_{NS}/\alpha_2} = 40000\sqrt{0.0005/18} \approx 210$ stalls.
 
 \subsection{Region of Interest Analysis}
-Based on the official layout plan and campus map, the festival's primary ``Region of Interest'' (ROI) spans a central band covering approximately \textbf{80 acres} (32.4 hectares), representing about 25\% of the total 320-acre IIT Delhi campus. This region encompasses the high-activity zones: SAC/OAT/Nalanda Grounds (18 acres), Main Grounds/Indoor Sports (25 acres), Academic Core (15 acres), and the Green Corridor leading to the Metro station (12 acres).
+Based on the official layout plan (Region.pdf) and campus map, the festival's primary ``Region of Interest'' (ROI) spans a central band covering approximately \textbf{93 acres} (37.6 hectares), representing about 29\% of the total 320-acre IIT Delhi campus. This region encompasses the high-activity zones in the West (Nalanda/SAC), Center (Sports Complex), and East (Academic Core to Main Gate).
 
-For the purpose of spatial modeling in Module 3.2, this ROI is divided into a grid of 16 cells, each approximately 5.0 acres ($142\text{m} \times 142\text{m}$) in size. The breakdown of sub-zones is detailed in Table \ref{tab:roi}.
+For the purpose of spatial modeling in Module 3.2, this ROI is divided into a fine grid of \textbf{155 cells}, each approximately \textbf{0.6 acres} ($50\text{m} \times 50\text{m}$) in size, to allow for high-resolution crowd density analysis. The breakdown of sub-zones is detailed in Table \ref{tab:roi_refined}.
 
 \begin{table}[h]
 \centering
-\caption{Region of Interest Sub-Zones for Rendezvous}
-\label{tab:roi}
+\caption{Refined Region of Interest Sub-Zones for Rendezvous}
+\label{tab:roi_refined}
 \begin{tabular}{@{}llcc@{}}
 \toprule
-\textbf{Zone} & \textbf{Key Landmarks} & \textbf{Area (acres)} & \textbf{Type} \\ \midrule
-A & SAC, OAT, Nalanda Grounds & 18 & Event Venue \\
-B & Main Grounds, Indoor Sports & 25 & Open Ground \\
-C & Library, Main Building, LHC & 15 & Academic Core \\
-D & Rose Garden, Block 99C, Nursery & 12 & Green Corridor \\
-E & Internal Roads \& Pathways & 10 & Circulation \\
+\textbf{Zone} & \textbf{Description} & \textbf{Area (acres)} & \textbf{Type} \\ \midrule
+West & SAC, OAT, Nalanda, Parking & 22 & Event Venue \\
+Center & Sports Complex (Indoor/Outdoor) & 28 & Open Ground \\
+East & Academic Core, LHC to Main Gate & 35 & Academic \\
+Circulation & Connecting Pathways & 8 & Roads \\
 \midrule
-  & \textbf{Total ROI} & \textbf{80} & --- \\
+  & \textbf{Total ROI} & \textbf{93} & --- \\
 \bottomrule
 \end{tabular}
 \end{table}

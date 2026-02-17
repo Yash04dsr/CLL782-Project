@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.11.16)  17 FEB 2026 22:16
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.11.16)  17 FEB 2026 22:27
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -534,15 +534,16 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [3]
 
-LaTeX Warning: Reference `tab:roi' on page 4 undefined on input line 180.
+LaTeX Warning: Reference `tab:roi_refined' on page 4 undefined on input line 18
+0.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 202.
+(hyperref)                removing `math shift' on input line 201.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 202.
+(hyperref)                removing `math shift' on input line 201.
 
 
 
@@ -563,7 +564,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
 [5]
-Overfull \hbox (14.76909pt too wide) in paragraph at lines 253--254
+Overfull \hbox (14.76909pt too wide) in paragraph at lines 252--253
 []\OT1/cmr/bx/n/10.95 Critical Ra-tio\OT1/cmr/m/n/10.95 : The anal-y-sis re-vea
 ls a crit-i-cal Attendee-to-Stall ra-tio ($\OML/cmm/m/it/10.95 N=S\OT1/cmr/m/n/
 10.95 )[] = []$.
@@ -590,20 +591,14 @@ LaTeX Warning: There were undefined references.
 
 LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
 
-
-Package rerunfilecheck Warning: File `Module_3_1_Report.out' has changed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
-
-Package rerunfilecheck Info: Checksums for `Module_3_1_Report.out':
-(rerunfilecheck)             Before: 913118A63893DC9E6C03CCFB9367AFDB;2404
-(rerunfilecheck)             After:  8A126928EF64AEE2111388FF6CDE371D;2606.
+Package rerunfilecheck Info: File `Module_3_1_Report.out' has not changed.
+(rerunfilecheck)             Checksum: 8A126928EF64AEE2111388FF6CDE371D;2606.
  ) 
 Here is how much of TeX's memory you used:
- 11748 strings out of 474662
- 180675 string characters out of 5751108
- 603008 words of memory out of 5000000
- 34585 multiletter control sequences out of 15000+600000
+ 11750 strings out of 474662
+ 180708 string characters out of 5751108
+ 603072 words of memory out of 5000000
+ 34587 multiletter control sequences out of 15000+600000
  569896 words of font info for 78 fonts, out of 8000000 for 9000
  319 hyphenation exceptions out of 8191
  75i,12n,79p,554b,579s stack positions out of 10000i,1000n,20000p,200000b,200000s
@@ -625,10 +620,10 @@ asic/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2
 025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/texliv
 e/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/tex
 live/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb>
-Output written on Module_3_1_Report.pdf (6 pages, 227196 bytes).
+Output written on Module_3_1_Report.pdf (6 pages, 227323 bytes).
 PDF statistics:
- 248 PDF objects out of 1000 (max. 8388607)
- 204 compressed objects within 3 object streams
+ 252 PDF objects out of 1000 (max. 8388607)
+ 208 compressed objects within 3 object streams
  53 named destinations out of 1000 (max. 500000)
- 97 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 105 words of extra memory for PDF output out of 10000 (max. 10000000)
 
