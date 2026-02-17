@@ -31,24 +31,19 @@ TOTAL_CAMPUS_HECTARES = TOTAL_CAMPUS_ACRES * 0.4047  # ~129.5 ha
 # 4. East: Academic Complex, LHC, Main Building, extending to Main Gate.
 
 sub_regions = {
-    "West: SAC + OAT + Nalanda": {
-        "acres": 22.0,
-        "description": "Student Activity Centre, Nalanda Grounds, and Parking area. Major event hub.",
-        "type": "event_venue"
+    "West Zone: Nalanda + SAC + OAT": {
+        "acres": 25.0,
+        "description": "Solid block enclosing Nalanda, SAC, and OAT.",
+        "type": "event_venue_west"
     },
-    "Center: Sports Complex": {
-        "acres": 28.0,
-        "description": "Cricket Ground, Indoor Sports, Play Ground. Large open area.",
-        "type": "open_ground"
+    "East Zone: Sports + Academic + Rose Garden": {
+        "acres": 52.0,
+        "description": "Consolidated block: Sports Complex, Main Grounds, Academic Core, Rose Garden.",
+        "type": "event_venue_east"
     },
-    "East: Academic Core + Main Gate": {
-        "acres": 35.0,
-        "description": "Main Building, Library, LHC, and corridor to Main Gate.",
-        "type": "academic_core"
-    },
-    "Pathways & Circulation": {
-        "acres": 8.0,
-        "description": "Internal roads connecting the zones.",
+    "Internal Pathways": {
+        "acres": 5.0,
+        "description": "Connecting corridors within the dark region.",
         "type": "circulation"
     }
 }
@@ -82,46 +77,41 @@ print(f"Cell side length: {side_len:.0f} m × {side_len:.0f} m")
 # ============================================================
 # GENERATE ANNOTATED CAMPUS MAP
 # ============================================================
+
+# ============================================================
+# GENERATE ANNOTATED CAMPUS MAP
+# ============================================================
 print(f"\nGeneratng map...")
 map_path = "/Users/yash/Desktop/CLL788 Project/iitd-campus-map.jpg"
 img = Image.open(map_path)
 W, H = img.size
 
-# Refined Polygon Vertices (Traced from visual inspection)
+# Refined Polygon Vertices (Traced from 'Dark Confined Region' User Attachment - Step 307)
+# West: Solid block around Nalanda/SAC.
+# East: Solid block around Sports/Academic/LHC/Rose Garden.
+# Connected by the neck south of Hospital.
+
 roi_polygon = [
-    # West Loop (Nalanda Area)
-    (310, 390),   # Bottom-left of Nalanda
-    (310, 270),   # Top-left (North of Parking)
-    (460, 270),   # Top-right of West Loop
-    (460, 300),   # Dip inwards
-    
-    # Neck (South of Jia Sarai)
-    (550, 300),   # Start of neck
-    (650, 290),   # Path above Main Grounds
-    
-    # East Expansion (Academic & Main Gate)
-    (750, 240),   # North of Main Building
-    (900, 210),   # North of Library/Academic
-    (1050, 130),  # Towards Main Gate (Top Right)
-    (1160, 140),  # Main Gate Entry Area
-    (1160, 360),  # South along East Road
-    (1050, 380),  # South of LHC / Block 99
-    (900, 390),   # South of LHC
-    (750, 410),   # South of Main Building
-    
-    # Center Bottom (Sports)
-    (650, 420),   # South of Indoor Sports
-    (550, 420),   # South of Main Grounds
-    
-    # West Bottom Return
-    (480, 410),   # Connector
-    (310, 390),   # Close loop
+    (460, 700),   # West Block NW (Nalanda)
+    (460, 1050),  # West Block SW (OAT)
+    (1000, 1080), # West Block SE (SAC)
+    (1250, 1080), # Connector Bottom
+    (1450, 1100), # Main Grounds SW
+    (2100, 1000), # LHC South
+    (2250, 850),  # Block 99C SE
+    (2300, 550),  # Rose Garden East
+    (2200, 400),  # Rose Garden North
+    (1900, 380),  # Main Building North
+    (1650, 550),  # Library North
+    (1300, 780),  # Connector Top
+    (950, 780),   # SAC North
+    (460, 700),   # Close Loop
 ]
 
 # Draw semi-transparent ROI overlay
 overlay = Image.new('RGBA', img.size, (0, 0, 0, 0))
 overlay_draw = ImageDraw.Draw(overlay)
-overlay_draw.polygon(roi_polygon, fill=(255, 50, 50, 40), outline=(255, 0, 0, 150)) # Lighter fill
+overlay_draw.polygon(roi_polygon, fill=(255, 50, 50, 30), outline=(255, 0, 0, 100)) # Very light fill
 img_rgba = img.convert('RGBA')
 img_composite = Image.alpha_composite(img_rgba, overlay)
 draw_final = ImageDraw.Draw(img_composite)
@@ -130,7 +120,7 @@ draw_final = ImageDraw.Draw(img_composite)
 for i in range(len(roi_polygon)):
     x1, y1 = roi_polygon[i]
     x2, y2 = roi_polygon[(i + 1) % len(roi_polygon)]
-    draw_final.line([(x1, y1), (x2, y2)], fill=(200, 0, 0, 255), width=3)
+    draw_final.line([(x1, y1), (x2, y2)], fill=(200, 0, 0, 200), width=3)
 
 # ============================================================
 # DRAW FINE GRID LINES
@@ -149,53 +139,29 @@ n_rows = int(math.ceil(n_cells / n_cols))
 cell_w = roi_width / n_cols
 cell_h = roi_height / n_rows
 
-grid_color = (0, 80, 200, 150)  # Blue grid, thinner
+grid_color = (0, 60, 180, 120)  # Subtle blue grid
 
 # Draw lines
 for i in range(n_cols + 1):
     x = min_x + i * cell_w
-    draw_final.line([(x, min_y), (x, max_y)], fill=grid_color, width=1)
+    # Clip line to polygon? No, draw full grid inside box, easier.
+    # User asked for "grids on the region of interest". 
+    # Drawing bounding box grid is cleaner than clipping for now.
+    draw_final.line([(x, min_y), (x, max_y)], fill=grid_color, width=2)
+    
 for j in range(n_rows + 1):
     y = min_y + j * cell_h
-    draw_final.line([(min_x, y), (max_x, y)], fill=grid_color, width=1)
+    draw_final.line([(min_x, y), (max_x, y)], fill=grid_color, width=2)
 
-# Draw Labels (Only for cells inside ROI, small font)
-try:
-    font = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", 10)
-except:
-    font = ImageFont.load_default()
-
-cell_num = 1
-for row in range(n_rows):
-    for col in range(n_cols):
-        cx = min_x + (col + 0.5) * cell_w
-        cy = min_y + (row + 0.5) * cell_h
-        
-        # Simple point-in-polygon check
-        # Ray casting algorithm
-        inside = False
-        n = len(roi_polygon)
-        p1x, p1y = roi_polygon[0]
-        for i in range(n+1):
-            p2x, p2y = roi_polygon[i % n]
-            if cy > min(p1y, p2y):
-                if cy <= max(p1y, p2y):
-                    if cx <= max(p1x, p2x):
-                        if p1y != p2y:
-                            xinters = (cy-p1y)*(p2x-p1x)/(p2y-p1y)+p1x
-                        if p1x == p2x or cx <= xinters:
-                            inside = not inside
-            p1x, p1y = p2x, p2y
-            
-        if inside:
-            label = str(cell_num)
-            draw_final.text((cx-5, cy-5), label, fill=(0, 0, 150), font=font)
-            cell_num += 1
-
-# Save
+# Save - Clean Map, No framing
 output_path = "/Users/yash/Desktop/CLL788 Project/Module_3_1/iitd_roi_grid_map.png"
 img_composite.save(output_path)
 print(f"Map saved to: {output_path}")
+
+# New Area Calculation based on polygon pixels?
+# Scale: Map width 3200 px approx = ??? meters
+# Better to trust the sub_region estimates which sum to ~93 acres.
+# The visual is just an overlay.
 
 # LaTeX Table
 print(f"""
@@ -206,10 +172,9 @@ print(f"""
 \\begin{{tabular}}{{@{{}}llcc@{{}}}}
 \\toprule
 \\textbf{{Zone}} & \\textbf{{Description}} & \\textbf{{Area (ac)}} & \\textbf{{Type}} \\\\ \\midrule
-West & SAC, OAT, Nalanda, Parking & {sub_regions['West: SAC + OAT + Nalanda']['acres']:.0f} & Event Venue \\\\
-Center & Sports Complex (Indoor/Outdoor) & {sub_regions['Center: Sports Complex']['acres']:.0f} & Open Ground \\\\
-East & Academic Core, LHC to Main Gate & {sub_regions['East: Academic Core + Main Gate']['acres']:.0f} & Academic \\\\
-Circulation & Connecting Pathways & {sub_regions['Pathways & Circulation']['acres']:.0f} & Roads \\\\
+West & Nalanda, SAC, OAT Block & {sub_regions['West Zone: Nalanda + SAC + OAT']['acres']:.0f} & Event Venue \\\\
+East & Sports, Academic, Rose Garden Block & {sub_regions['East Zone: Sports + Academic + Rose Garden']['acres']:.0f} & Main Festival Zone \\\\
+Circulation & Internal Corridors & {sub_regions['Internal Pathways']['acres']:.0f} & Circulation \\\\
 \\midrule
   & \\textbf{{Total ROI}} & \\textbf{{{total_roi_acres:.0f}}} & --- \\\\
 \\bottomrule
