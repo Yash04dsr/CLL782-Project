@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.11.16)  18 FEB 2026 15:01
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.11.16)  18 FEB 2026 15:21
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1138,10 +1138,10 @@ Overfull \vbox (56.63875pt too high) detected at line 231
 
 ]
 LaTeX Font Info:    Font shape `OT1/cmss/b/n' in size <9> not available
-(Font)              Font shape `OT1/cmss/bx/n' tried instead on input line 276.
+(Font)              Font shape `OT1/cmss/bx/n' tried instead on input line 280.
 
 LaTeX Font Info:    Font shape `OT1/cmss/b/n' in size <5> not available
-(Font)              Font shape `OT1/cmss/bx/n' tried instead on input line 276.
+(Font)              Font shape `OT1/cmss/bx/n' tried instead on input line 280.
 
 
 
@@ -1157,10 +1157,10 @@ LaTeX Font Info:    Font shape `OT1/cmss/b/n' in size <5> not available
 
 ]
 LaTeX Font Info:    Font shape `OT1/cmss/b/n' in size <10> not available
-(Font)              Font shape `OT1/cmss/bx/n' tried instead on input line 352.
+(Font)              Font shape `OT1/cmss/bx/n' tried instead on input line 356.
 
 LaTeX Font Info:    Font shape `OT1/cmss/b/n' in size <7> not available
-(Font)              Font shape `OT1/cmss/bx/n' tried instead on input line 352.
+(Font)              Font shape `OT1/cmss/bx/n' tried instead on input line 356.
 
 
 
@@ -1248,7 +1248,7 @@ c/texmf-dist/fonts/type1/public/amsfonts/cm/cmssi12.pfb></usr/local/texlive/202
 live/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local
 /texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/lo
 cal/texlive/2025basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb>
-Output written on ppt.pdf (22 pages, 1319268 bytes).
+Output written on ppt.pdf (22 pages, 1319194 bytes).
 PDF statistics:
  290 PDF objects out of 1000 (max. 8388607)
  209 compressed objects within 3 object streams

@@ -48,12 +48,12 @@ The model aggregates nomenclature from previous modules. Key system-level variab
 | $j_{bin}$ | Index for candidate bin locations | - | Index |
 | $j_{refill}$ | Index for candidate refill station locations | - | Index |
 | $j_{proc}$ | Index for waste processing facilities | - | Index |
-| $t$ | Bin type (recyclable, compostable, general) | - | Index |
+| $t$ | Waste stream (Wet, Dry) | - | Index |
 | $C_{sys}$ | Total Economic Cost of System | INR | Obj Component |
 | $E_{sys}$ | Total Environmental Impact | kg CO2e | Obj Component |
 | $I_{sys}$ | Total User Inconvenience (Walking Distance) | person-m | Obj Component |
 | $w_1, w_2, w_3$ | Weights for multi-objective scalarization | - | Parameter |
-| $y^{bin}_{j,t}$ | Binary: Install bin type $t$ at $j$ | - | Decision Var |
+| $y^{bin}_{j}$ | Binary: Install dual-bin at $j$ | - | Decision Var |
 | $y^{refill}_j$ | Binary: Install refill station at $j$ | - | Decision Var |
 | $x^{waste}_{i,j}$ | Waste flow from zone $i$ to facility $j$ | kg | Decision Var |
 | $B_{total}$ | Global Budget for all sustainability initiatives | INR | Parameter |
@@ -74,7 +74,7 @@ The problem is a **Multi-Objective Mixed-Integer Linear Program (MO-MILP)**.
 We minimize a weighted sum of three competing goals:
 
 1.  **Economic Cost ($C_{sys}$):**
-    $$ C_{sys} = \sum C_{bin} \cdot y^{bin} + \sum C_{install} \cdot y^{refill} + \sum C_{trans} \cdot x^{waste} + C_{fixed} \cdot N_{veh} $$
+    $$ C_{sys} = \sum C \cdot y^{bin} + \sum C_{install} \cdot y^{refill} + \sum C_{trans} \cdot x^{waste} + C_{fixed} \cdot N_{veh} $$
     *(Terms represent: Bins + Refill Stations + Logistics + Fleet)*
 
 2.  **Environmental Cost ($E_{sys}$):**

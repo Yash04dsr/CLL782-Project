@@ -243,8 +243,12 @@
     \vspace{0.3cm}
     \textbf{Key Considerations:}
     \begin{itemize}
-        \item 3 Bin Types: \textbf{Recyclable}, \textbf{Compostable}, \textbf{General}.
-        \item Each bin has a \textbf{cost}, a \textbf{service radius} $R_t$, and a \textbf{capacity} $K_t$.
+        \item \textbf{Dual-compartment bins} (Wet + Dry) per SWM Rules 2016.
+            \begin{itemize}
+                \item \textcolor{HighlightGreen}{Green}: Compostable / Organic (food waste).
+                \item \textcolor{AccentBlue}{Blue}: Recyclable (paper, plastic, bottles).
+            \end{itemize}
+        \item Each unit has a \textbf{cost} $C$, \textbf{service radius} $R$, and \textbf{capacity} $K$.
         \item \textbf{Greenery Protection}: Bins on hardscape edges only (no trampling of lawns).
         \item Designed for \textbf{peak surge} demand (Star Night: 40{,}000 in the zone).
     \end{itemize}
@@ -258,39 +262,39 @@
         \begin{tabular}{l p{4.8cm} l l}
             \toprule
             \textbf{Sym} & \textbf{Description} & \textbf{Unit} & \textbf{Type} \\ \midrule
-            $y_{j,t}$ & Install bin type $t$ at location $j$? & $\{0,1\}$ & \textbf{Binary Decision} \\
-            $a_{i,j,t}$ & Fraction of zone $i$ demand $\to$ bin $j$ & $[0,1]$ & Continuous Decision \\
+            $y_{j}$ & Install dual-bin at location $j$? & $\{0,1\}$ & \textbf{Binary Decision} \\
+            $a_{i,j}$ & Fraction of zone $i$ demand $\to$ bin $j$ & $[0,1]$ & Continuous Decision \\
             $F_i$ & Peak footfall at zone $i$ & Ppl/hr & Parameter \\
             $D_{ij}$ & Walking distance $i \to j$ & m & Parameter \\
             \midrule
             $w$ & Waste generation rate & 0.15 kg/p & Constant \\
-            $R_t$ & Service radius & 30--50 m & Constant \\
-            $K_t$ & Bin capacity (dual FRP) & 20--30 kg & Constant \\
-            $C_t$ & Bin procurement cost & Rs.\,10--15K & Constant \\
+            $R$ & Service radius & 40 m & Constant \\
+            $K$ & Bin capacity (dual FRP unit) & 30 kg & Constant \\
+            $C$ & Bin procurement cost (per unit) & Rs.\,12K & Constant \\
             $B$ & Total budget & Rs.\ & Constraint \\
             \bottomrule
         \end{tabular}
     \end{table}
 
-    \footnotesize \textbf{Ref:} Disney 30-ft rule; Glasdon bin-spacing norms (30--50 m); CPCB waste norms.
+    \footnotesize \textbf{Ref:} SWM Rules 2016 (Wet+Dry segregation); Disney 30-ft rule; Glasdon norms (30--50 m).
 \end{frame}
 
 % --- Slide 3/4 ---
 \begin{frame}{3.2 Mathematical Formulation (MILP)}
     \begin{exampleblock}{Minimize Total User Inconvenience}
-        $$ \text{Min } Z = \sum_{i=1}^{m} \sum_{j=1}^{p} \sum_{t} F_i \cdot a_{i,j,t} \cdot D_{ij} $$
+        $$ \text{Min } Z = \sum_{i=1}^{m} \sum_{j=1}^{p} F_i \cdot a_{i,j} \cdot D_{ij} $$
     \end{exampleblock}
 
     \textbf{Subject to:}
     \begin{enumerate}
         \item \textbf{Coverage}: Every zone must be fully served.
-            $\displaystyle\sum_{j,t} a_{i,j,t} = 1 \quad \forall\, i$
+            $\displaystyle\sum_{j} a_{i,j} = 1 \quad \forall\, i$
         \item \textbf{Logical Link}: No assignment without installation.
-            $a_{i,j,t} \le y_{j,t} \quad \forall\, i,j,t$
+            $a_{i,j} \le y_{j} \quad \forall\, i,j$
         \item \textbf{Capacity}: Bins must not overflow.
-            $\displaystyle\sum_{i} F_i \cdot w \cdot a_{i,j,t} \le K_t \cdot y_{j,t} \quad \forall\, j,t$
-        \item \textbf{Accessibility}: $a_{i,j,t} = 0$ if $D_{ij} > R_t$
-        \item \textbf{Budget}: $\displaystyle\sum_{j,t} C_t \cdot y_{j,t} \le B$
+            $\displaystyle\sum_{i} F_i \cdot w \cdot a_{i,j} \le K \cdot y_{j} \quad \forall\, j$
+        \item \textbf{Accessibility}: $a_{i,j} = 0$ if $D_{ij} > R$
+        \item \textbf{Budget}: $\displaystyle\sum_{j} C \cdot y_{j} \le B$
     \end{enumerate}
 \end{frame}
 
@@ -301,7 +305,7 @@
             \begin{block}{Complexity}
                 \begin{itemize}
                     \item \textbf{NP-hard} Facility Location.
-                    \item Discretize ROI into 20m $\times$ 20m grid.
+                    \item Discretize ROI into 137 cells ($50\text{m} \times 50\text{m}$).
                     \item Solvable via Branch-and-Bound (Gurobi / CBC).
                 \end{itemize}
             \end{block}
@@ -311,7 +315,7 @@
             \begin{alertblock}{Expected Outcomes}
                 \begin{itemize}
                     \item \textbf{High density} near OAT/Amul (food zones, high $F_i$).
-                    \item \textbf{Sparse} along Main Road (low $F_i$, $R_t$ constraint).
+                    \item \textbf{Sparse} along Main Road (low $F_i$, $R$ constraint).
                     \item Relaxing binary $\to$ LP gives lower bound.
                 \end{itemize}
             \end{alertblock}
@@ -322,7 +326,7 @@
     \textbf{Data Summary:}
     \begin{itemize}
         \item Total peak waste: $40{,}000 \times 0.15 = \mathbf{6{,}000}$ kg/day.
-        \item At $K_t = 30$ kg/bin $\Rightarrow$ minimum $\sim$200 bins needed.
+        \item At $K = 30$ kg/bin $\Rightarrow$ minimum $\sim$200 dual-bins needed.
         \item Budget feasibility: 200 bins $\times$ Rs.\,12K $\approx$ Rs.\,24 Lakhs.
     \end{itemize}
 \end{frame}
@@ -525,7 +529,7 @@
     \begin{block}{System-Level Summary}
         \begin{enumerate}
             \item \textbf{Mod 3.1}: Right-size infrastructure ($S^* \approx 210$ stalls) to cut congestion-led waste.
-            \item \textbf{Mod 3.2}: Place $\sim$200 bins within 30--50 m radius to capture waste at source.
+            \item \textbf{Mod 3.2}: Place $\sim$200 dual-bins (Wet+Dry) within 40 m radius to capture waste at source.
             \item \textbf{Mod 3.3}: Route 6{,}000 kg/day via optimized fleet (minimize cost, maximize recycling revenue).
             \item \textbf{Mod 3.4}: Deploy $\sim$40 refill stations to eliminate single-use plastic.
         \end{enumerate}
