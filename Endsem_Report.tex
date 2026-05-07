@@ -465,11 +465,11 @@ where $\hat{(\cdot)}$ denotes min-max normalised objectives (scaled to $[0,1]$),
 \toprule
 & \textbf{Min Cost} & \textbf{Min Inconvenience} & \textbf{Balanced} \\ \midrule
 Weights $(w_1, w_2, w_3)$ & $(1, 0, 0)$ & $(0, 0, 1)$ & $(0.29, 0.31, 0.41)$ \\
-Bins & 404 & 535 & 404 \\
-Stations & 40 & 40 & 40 \\
-$C_{sys}$ (Rs. Lakhs) & 83.9 & 95.0 & 83.9 \\
-$E_{sys}$ (kg CO\textsubscript{2}e) & 6,690 & 7,345 & 6,690 \\
-$I_{sys}$ & 160,657 & 136,026 & 160,657 \\
+Bins & 202 & 535 & 404 \\
+Stations & 54 & 40 & 40 \\
+$C_{sys}$ (Rs. Lakhs) & 81.0 & 95.0 & 83.9 \\
+$E_{sys}$ (kg CO\textsubscript{2}e) & 8,262 & 7,345 & 6,690 \\
+$I_{sys}$ & 245,676 & 136,026 & 160,657 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -521,10 +521,10 @@ This project presents an integrated, spatially-resolved optimization framework f
     \item \textbf{3-type waste segregation}: Separate bins (compostable/recyclable/general), separate vehicles (Green/Blue/Grey Tippers), and type-specific facility routing.
     \item \textbf{Biogas bottleneck identified}: On-campus composting capacity (500~kg/day) is severely undersized for the 2,400~kg/day compostable waste stream, forcing 79\% to landfill. Expanding this is the single highest-impact investment.
     \item \textbf{Near-optimal heuristics}: Module 3.4's greedy solution achieves a 1.31\% gap versus the LP relaxation, validating the approach for large-scale instances.
-    \item \textbf{Budget allocation}: The Pareto analysis (Module 3.5) shows that the minimum-cost and minimum-environment solutions coincide --- investing in the right number of bins reduces both cost and CO\textsubscript{2}e simultaneously.
+    \item \textbf{Budget allocation}: The Pareto analysis (Module 3.5) reveals a genuine three-way trade-off --- the minimum-cost point (202 bins, Rs.\,81.0L) saves money but increases environmental load ($E_{sys} = 8{,}262$ kgCO\textsubscript{2}e) due to poorer waste segregation. The balanced allocation invests more in bins to achieve significantly lower emissions.
 \end{enumerate}
 
-The recommended operating point: \textbf{436 waste bins} (3 types, Rs.\,35L), \textbf{40 water stations} (Rs.\,40L), \textbf{6 segregated vehicles} (Rs.\,10L/day operational), for a total system cost of approximately \textbf{Rs.\,85 Lakhs capital + Rs.\,10 Lakhs/day operational}.
+The recommended operating point (from the balanced Pareto allocation): \textbf{404 waste bins} (3 types, Rs.\,34L), \textbf{40 water stations} (Rs.\,40L), \textbf{6 segregated vehicles}, for a total system cost of \textbf{Rs.\,83.9 Lakhs} (inclusive of Rs.\,10L/day logistics).
 
 \begin{thebibliography}{99}
 

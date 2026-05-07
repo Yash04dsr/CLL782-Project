@@ -38,7 +38,7 @@ DATA_DIR = os.path.join(os.path.dirname(OUT_DIR), "grid_data")
 
 # ── Constants from individual modules ──
 BIN_COSTS = {"compostable": 10_000, "recyclable": 8_000, "general": 6_000}
-WEIGHTED_AVG_BIN_COST = (10_000 * 0.4 + 8_000 * 0.4 + 6_000 * 0.2)  # ₹8,800
+WEIGHTED_AVG_BIN_COST = 10_000 * 0.4 + 8_000 * 0.4 + 6_000 * 0.2  # ₹8,400
 STATION_COST = 100_000
 LOGISTICS_COST_FIXED = 1_001_350  # from Module 3.3 base optimal
 
@@ -46,7 +46,7 @@ B_TOTAL = 85_00_000  # ₹85 Lakhs total sustainability fund
 
 # Bin parameters (from Module 3.2)
 WASTE_TOTAL_KG = 6_000
-BIN_AVG_CAPACITY_KG = (20 * 0.4 + 15 * 0.4 + 10 * 0.2) / 1  # weighted: 16 kg
+BIN_AVG_CAPACITY_KG = 20 * 0.4 + 15 * 0.4 + 10 * 0.2  # weighted: 16 kg
 MIN_BINS_CAPACITY = int(np.ceil(WASTE_TOTAL_KG / BIN_AVG_CAPACITY_KG))  # ~375
 
 # Station parameters (from Module 3.4)
@@ -78,7 +78,7 @@ def compute_objectives(B_bin, B_stn):
     This is the sub-problem evaluation: for a given budget split,
     determine how many bins/stations can be procured and their impact.
     """
-    n_bins = max(MIN_BINS_CAPACITY, int(B_bin / WEIGHTED_AVG_BIN_COST))
+    n_bins = max(1, int(B_bin / WEIGHTED_AVG_BIN_COST))
     n_stations = max(MIN_STATIONS_CAPACITY, int(B_stn / STATION_COST))
 
     # C_sys: total economic cost (actual spending)
@@ -121,11 +121,10 @@ def solve_weighted_sum(w1, w2, w3, C_range, E_range, I_range):
         I_norm = (I - I_range[0]) / max(I_range[1] - I_range[0], 1)
         return w1 * C_norm + w2 * E_norm + w3 * I_norm
 
-    min_bin_budget = MIN_BINS_CAPACITY * WEIGHTED_AVG_BIN_COST
     min_stn_budget = MIN_STATIONS_CAPACITY * STATION_COST
     constraints = [{"type": "ineq", "fun": lambda x: B_TOTAL - x[0] - x[1]}]
-    bounds = [(min_bin_budget, B_TOTAL - min_stn_budget),
-              (min_stn_budget, B_TOTAL - min_bin_budget)]
+    bounds = [(WEIGHTED_AVG_BIN_COST, B_TOTAL - min_stn_budget),
+              (min_stn_budget, B_TOTAL - WEIGHTED_AVG_BIN_COST)]
 
     best_result = None
     best_obj = np.inf

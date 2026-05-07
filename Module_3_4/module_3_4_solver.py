@@ -100,7 +100,6 @@ def solve_greedy(footfall, dist_matrix):
                 assign = min(remaining[ci], cap_left)
                 if assign <= 0:
                     break
-                dist_saving = (assigned_dist[ci] - D[ci, cj]) if assigned_dist[ci] < np.inf else 0
                 score += assign * (MAX_WALK_M - D[ci, cj])  # prefer closer
                 cap_left -= assign
                 if cap_left <= 0:

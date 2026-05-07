@@ -182,7 +182,7 @@ def summarise(result):
     total_bins = 0
     for t in BIN_TYPES:
         n = result["total_bins"].get(t, 0)
-        cost = n * BIN_TYPES[t]["cost_inr"] if isinstance(n, int) else n * BIN_TYPES[t]["cost_inr"]
+        cost = n * BIN_TYPES[t]["cost_inr"]
         total_cost += cost
         total_bins += n
         n_sites = len(result["placements"].get(t, {}))
