@@ -1,0 +1,30 @@
+{
+  "formulation": {
+    "decision_variables": [
+      "B_bin (budget for bins)",
+      "B_stn (budget for stations)"
+    ],
+    "constraint": "B_bin + B_stn <= Rs. 8,500,000 (shared budget)",
+    "objectives": [
+      "C_sys (economic cost)",
+      "E_sys (CO2e)",
+      "I_sys (inconvenience)"
+    ],
+    "method": "Weighted-sum scalarisation with scipy SLSQP"
+  },
+  "pareto_points": 14,
+  "recommended": {
+    "weights": {
+      "cost": 0.286,
+      "env": 0.306,
+      "inconv": 0.408
+    },
+    "B_bin": 3400000.0,
+    "B_stn": 4080000.0,
+    "n_bins": 404,
+    "n_stations": 40,
+    "C_sys": 8394950.0,
+    "E_sys": 6690.0,
+    "I_sys": 160656.89108910892
+  }
+}

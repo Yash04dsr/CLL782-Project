@@ -82,7 +82,7 @@ print(f"Cell side length: {side_len:.0f} m × {side_len:.0f} m")
 # GENERATE ANNOTATED CAMPUS MAP
 # ============================================================
 print(f"\nGeneratng map...")
-map_path = "/Users/yash/Desktop/CLL788 Project/iitd-campus-map.jpg"
+map_path = "/Users/yash/Desktop/CLL782 Project/iitd-campus-map.jpg"
 img = Image.open(map_path)
 W, H = img.size
 
@@ -154,7 +154,7 @@ for j in range(n_rows + 1):
     draw_final.line([(min_x, y), (max_x, y)], fill=grid_color, width=2)
 
 # Save - Clean Map, No framing
-output_path = "/Users/yash/Desktop/CLL788 Project/Module_3_1/iitd_roi_grid_map.png"
+output_path = "/Users/yash/Desktop/CLL782 Project/Module_3_1/iitd_roi_grid_map.png"
 img_composite.save(output_path)
 print(f"Map saved to: {output_path}")
 

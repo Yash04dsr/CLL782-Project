@@ -1,0 +1,56 @@
+{
+  "base": {
+    "label": "Base",
+    "status": "Optimal",
+    "total_cost": 1001349.5616999998,
+    "flows": {
+      "compostable": {
+        "biogas": 500.0,
+        "landfill": 1900.0
+      },
+      "recyclable": {
+        "recycler": 2400.0,
+        "landfill": 0
+      },
+      "general": {
+        "landfill": 1200.0
+      }
+    },
+    "vehicles": {
+      "compostable": 2,
+      "recyclable": 2,
+      "general": 2
+    },
+    "transport_cost": 1010699.5575000001,
+    "processing_cost": -12749.995800000004,
+    "fleet_cost": 3400,
+    "waste_multiplier": 1.0
+  },
+  "sensitivity": {
+    "label": "+20% Waste",
+    "status": "Optimal",
+    "total_cost": 1217589.4740399998,
+    "flows": {
+      "compostable": {
+        "biogas": 500.0,
+        "landfill": 2380.0
+      },
+      "recyclable": {
+        "recycler": 2880.0,
+        "landfill": 0
+      },
+      "general": {
+        "landfill": 1440.0
+      }
+    },
+    "vehicles": {
+      "compostable": 2,
+      "recyclable": 2,
+      "general": 2
+    },
+    "transport_cost": 1229339.4689999993,
+    "processing_cost": -15149.994960000004,
+    "fleet_cost": 3400,
+    "waste_multiplier": 1.2
+  }
+}

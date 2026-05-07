@@ -1,0 +1,566 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage[table,xcdraw]{xcolor}
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{longtable}
+\usepackage{array}
+
+\geometry{margin=1in}
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{CLL782: Process Optimization}
+\rhead{End-Semester Report}
+\cfoot{\thepage}
+
+\title{\textbf{Process Optimization Project Report}\\[0.3cm]
+\Large Sustainable ``Rendezvous'': Integrated Optimization of\\Festival Infrastructure at IIT Delhi\\[0.3cm]
+\large Modules 3.1\,--\,3.5: End-Semester Submission}
+\author{
+    Sakhare Yash Balram (2022CH71496) \\
+    Snigdhadhyut Dash \\
+    Ninad Narsing Gawade \\[0.2cm]
+    \small Department of Chemical Engineering, IIT Delhi
+}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section*{Declaration of Tool Usage}
+We declare that in completing this assignment:
+\begin{itemize}
+    \item We used LLM-based tools (Cursor AI, Gemini) for assistance in:
+    \begin{itemize}
+        \item Generating grid data and walking distance matrices from OpenStreetMap.
+        \item Formulating and debugging MILP models in PuLP.
+        \item Formatting mathematical expressions and generating \LaTeX\ code.
+    \end{itemize}
+    \item We understand the submitted solution fully and can explain and justify every part of our code and reasoning.
+    \item All results have been independently verified.
+\end{itemize}
+
+\vspace{0.3cm}\hrule\vspace{0.5cm}
+
+\tableofcontents
+\newpage
+
+% =========================================================================
+\section{Introduction}
+% =========================================================================
+
+IIT Delhi's annual cultural festival ``Rendezvous'' attracts over 40,000 visitors per day onto a 163-acre campus not designed for such loads. This project addresses the end-to-end planning of the festival's sustainability infrastructure through five interconnected optimization modules:
+
+\begin{enumerate}
+    \item \textbf{Module 3.1}: Environmental Load Modelling --- quantifying total ecological footprint as a function of event scale.
+    \item \textbf{Module 3.2}: Dustbin Placement --- 3-type waste-segregated Facility Location Problem (MILP).
+    \item \textbf{Module 3.3}: Waste Collection Logistics --- vehicle-type-segregated minimum-cost flow.
+    \item \textbf{Module 3.4}: Water Refill Station Planning --- Capacitated P-Median problem.
+    \item \textbf{Module 3.5}: Integrated Multi-Objective Optimization --- budget-constrained Pareto analysis.
+\end{enumerate}
+
+A distinctive feature of this project is the \textbf{geospatial data pipeline} that underpins all modules. Rather than using Euclidean distances or arbitrary grids, we construct real walking distances from OpenStreetMap (OSM) pedestrian network data via Dijkstra's algorithm. This section is detailed next.
+
+% =========================================================================
+\section{Geospatial Data Pipeline}
+\label{sec:geospatial}
+% =========================================================================
+
+All spatial data used across Modules 3.2--3.5 is generated through a four-step pipeline, implemented in \texttt{grid\_generation.py}.
+
+\subsection{Step 1: Region of Interest (ROI) Extraction}
+
+An 18-vertex polygon was traced in Google Earth, exported as KML, and parsed programmatically. The ROI covers \textbf{162.8 acres} (658,906~m\textsuperscript{2}) of IIT Delhi, encompassing OAT, Nalanda Ground, SAC, LHC, Main Building, Sports Complex, Rose Garden, and surrounding areas. Coordinates are in WGS~84 (EPSG:4326).
+
+\subsection{Step 2: UTM Grid Generation}
+
+The ROI polygon is projected to UTM for metric gridding. A 50~m $\times$ 50~m grid is overlaid and cells with less than 25\% overlap with the ROI are discarded, yielding \textbf{287 valid cells}. Each cell serves as both a demand zone $i$ (with associated footfall and waste) and a candidate facility site $j$.
+
+\subsection{Step 3: OSM Walking Network}
+
+The OpenStreetMap pedestrian network is downloaded via \texttt{osmnx} for the ROI plus a 200~m buffer, resulting in a graph with \textbf{413 nodes} and \textbf{1,078 edges} (footpaths, sidewalks, campus roads). Each cell centroid is snapped to its nearest network node.
+
+\subsection{Step 4: Dijkstra Walking Distance Matrix}
+
+Single-source Dijkstra's algorithm is run from every snapped node. The result is a \textbf{287 $\times$ 287 symmetric matrix} $\mathbf{D}$ where $D_{ij}$ is the shortest walking distance (in metres) from the centroid of cell $i$ to the centroid of cell $j$ along real pedestrian paths.
+
+\begin{table}[H]
+\centering
+\caption{Walking Distance Matrix Statistics}
+\label{tab:dist_stats}
+\begin{tabular}{lr}
+\toprule
+\textbf{Metric} & \textbf{Value} \\ \midrule
+Number of cells & 287 \\
+Average pairwise walking distance & 836.9 m \\
+Maximum walking distance & 3,351.1 m \\
+Network nodes / edges & 413 / 1,078 \\
+Fallback (disconnected pairs) & Euclidean $\times$ 1.3 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Why not Euclidean?} Straight-line distances underestimate walking distances by approximately 30\% on a campus with buildings, fences, and restricted pathways. Every $D_{ij}$ used in Modules 3.2--3.5 is a real walking distance, making our coverage radii, service constraints, and objective values physically meaningful.
+
+\subsection{Footfall and Waste Estimation}
+
+A spatial gravity model distributes the total peak footfall ($N_{total} = 40{,}000$ persons) across cells:
+\begin{equation}
+    F_i = \frac{\displaystyle\sum_{v=1}^{10} w_v \cdot \exp\!\left(-\frac{d_{iv}^2}{2\sigma^2}\right) \cdot A_i}{\displaystyle\sum_{k=1}^{287} \sum_{v=1}^{10} w_v \cdot \exp\!\left(-\frac{d_{kv}^2}{2\sigma^2}\right) \cdot A_k} \times N_{total}
+\end{equation}
+
+\noindent where $F_i$ = footfall in cell $i$ (persons), $w_v \in [0.3, 1.0]$ = attractiveness weight of venue $v$, $d_{iv}$ = haversine distance from cell $i$ to venue $v$ (m), $\sigma = 350$~m (Gaussian decay scale), and $A_i$ = area of cell $i$ (m\textsuperscript{2}). Ten venue hotspots are used: OAT ($w=1.0$), Nalanda Ground ($0.85$), Amul Food Court ($0.80$), SAC ($0.70$), LHC ($0.60$), Red Square ($0.55$), Biotech Lawn ($0.45$), Main Building ($0.40$), Sports Complex ($0.35$), and Rose Garden ($0.30$).
+
+Waste generation per cell follows CPCB norms at 0.15~kg/person/visit, with a 40:40:20 split into compostable, recyclable, and general waste. This yields:
+
+\begin{table}[H]
+\centering
+\caption{Waste Generation Summary}
+\begin{tabular}{lrr}
+\toprule
+\textbf{Waste Type} & \textbf{Fraction} & \textbf{Total (kg/day)} \\ \midrule
+Compostable (wet) & 40\% & 2,400 \\
+Recyclable (dry)  & 40\% & 2,400 \\
+General (inert)   & 20\% & 1,200 \\
+\midrule
+\textbf{Total}    & 100\% & \textbf{6,000} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% =========================================================================
+\section{Module 3.1: Environmental Load Modelling}
+\label{sec:mod31}
+% =========================================================================
+
+\subsection{Formulation}
+
+The total environmental load $E$ (kg CO\textsubscript{2}-eq) is modelled as a function of three variables:
+
+\begin{itemize}
+    \item $N$ = number of attendees (persons)
+    \item $S$ = number of food stalls (count)
+    \item $A$ = total activity-hours
+\end{itemize}
+
+\begin{equation}
+    E(N, S, A) = \underbrace{(\alpha_1 N + \alpha_2 S + \alpha_3 A)}_{\text{Base Load}} + \underbrace{(\beta_N N^{1.3} + \beta_S S^{1.2} + \beta_A A^{0.8})}_{\text{Non-linear Scaling}} + \underbrace{\gamma \frac{N^2}{S}}_{\text{Congestion Penalty}}
+\end{equation}
+
+\begin{table}[H]
+\centering
+\caption{Module 3.1 Parameter Values}
+\begin{tabular}{clrl}
+\toprule
+\textbf{Parameter} & \textbf{Description} & \textbf{Value} & \textbf{Source} \\ \midrule
+$\alpha_1$ & per-capita base impact & 2.5 kg CO\textsubscript{2}e/person & AGF 2022 \\
+$\alpha_2$ & per-stall embodied energy & 18.0 kg CO\textsubscript{2}e/stall & CEA 2024 \\
+$\alpha_3$ & per-activity base impact & 12.0 kg CO\textsubscript{2}e/act-hr & CEA 2024 \\
+$\beta_N$ & crowding nonlinearity & 0.002 & Bettencourt 2007 \\
+$\beta_S$ & stall scaling & 0.5 & Letterman 1980 \\
+$\beta_A$ & activity scaling & 5.0 & Six-tenths rule \\
+$\gamma$ & congestion penalty & 0.0005 & Calibrated \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Optimization}
+
+For fixed $N = 40{,}000$ and $A = 50$, differentiating $E$ with respect to $S$ and setting $\partial E / \partial S = 0$ yields the optimal stall count. An analytical approximation (neglecting the $\beta_S S^{0.2}$ term) gives:
+\begin{equation}
+    S^* \approx N \sqrt{\gamma / \alpha_2} = 40{,}000 \times \sqrt{0.0005/18} \approx 211 \text{ stalls}
+\end{equation}
+
+Numerical verification via \texttt{scipy.optimize.minimize\_scalar} gives $S^* = 201$ stalls with $E^* = 110{,}524$~kg CO\textsubscript{2}-eq (per-capita: 2.76~kg CO\textsubscript{2}e/person).
+
+\subsection{Component Breakdown at Design Point}
+
+At $N = 40{,}000$, $S = 201$, $A = 50$: the base load contributes 56\%, crowding ($N^{1.3}$) contributes 23\%, the congestion penalty ($N^2/S$) contributes 14\%, and the remaining terms contribute 7\%. The congestion term dominates at low $S$, confirming that sufficient stall infrastructure is environmentally critical.
+
+% =========================================================================
+\section{Module 3.2: Dustbin Placement with 3-Type Waste Segregation}
+\label{sec:mod32}
+% =========================================================================
+
+\subsection{Formulation}
+
+This module solves a \textbf{Facility Location Problem (FLP)} with three bin types $t \in \mathcal{T} = \{\text{compostable}, \text{recyclable}, \text{general}\}$.
+
+\paragraph{Decision Variables:}
+\begin{itemize}
+    \item $y_{j,t} \in \mathbb{Z}_{\ge 0}$: number of bins of type $t$ installed at candidate site $j$ (up to 10 per site).
+    \item $a_{i,j,t} \in [0,1]$: fraction of zone $i$'s type-$t$ waste assigned to site $j$.
+\end{itemize}
+
+\paragraph{Parameters:}
+\begin{itemize}
+    \item $W_{i,t}$: waste of type $t$ generated in zone $i$ (kg), from the footfall/waste model (Section~\ref{sec:geospatial}).
+    \item $D_{ij}$: walking distance from zone $i$ to site $j$ (m), from Dijkstra matrix.
+    \item $K_t$: capacity of one bin of type $t$ (kg).
+    \item $C_t$: unit cost of one bin of type $t$ (Rs.).
+    \item $R_t$: maximum service radius for bin type $t$ (m).
+\end{itemize}
+
+\begin{table}[H]
+\centering
+\caption{Bin Type Parameters}
+\begin{tabular}{lcccl}
+\toprule
+\textbf{Bin Type $t$} & \textbf{$K_t$ (kg)} & \textbf{$C_t$ (Rs.)} & \textbf{$R_t$ (m)} & \textbf{Colour} \\ \midrule
+Compostable (wet) & 20 & 10,000 & 200 & Green \\
+Recyclable (dry)  & 15 &  8,000 & 200 & Blue \\
+General (inert)   & 10 &  6,000 & 250 & Grey \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Objective:} Minimise total waste-weighted walking distance:
+\begin{equation}
+    \min \; Z = \sum_{i=1}^{287} \sum_{j} \sum_{t \in \mathcal{T}} W_{i,t} \cdot a_{i,j,t} \cdot D_{ij}
+\end{equation}
+
+\paragraph{Subject to:}
+\begin{align}
+    &\text{(C1) Coverage:}    & \sum_j a_{i,j,t} &= 1 \quad &&\forall\, i,\, t & \text{(all waste assigned)} \\
+    &\text{(C2) Capacity:}    & \sum_i W_{i,t} \cdot a_{i,j,t} &\le K_t \cdot y_{j,t} \quad &&\forall\, j,\, t & \text{(bin capacity)} \\
+    &\text{(C3) Radius:}      & a_{i,j,t} &= 0 \;\text{if}\; D_{ij} > R_t &&& \text{(service radius)} \\
+    &\text{(C4) Budget:}      & \sum_j \sum_t C_t \cdot y_{j,t} &\le 35{,}00{,}000 &&& \text{(Rs.\,35 Lakhs)}
+\end{align}
+
+\subsection{Solution Method}
+
+The problem is formulated as a Mixed-Integer Linear Program (MILP) and solved using PuLP with the CBC solver. An LP relaxation (setting $y_{j,t}$ continuous) is also solved to provide a lower bound. The model has $\sim$200,000 variables and $\sim$250,000 constraints after pre-computing reachable pairs per type.
+
+\subsection{Results}
+
+\begin{table}[H]
+\centering
+\caption{Module 3.2 Results: Bin Placement}
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Bin Type} & \textbf{Bins Placed} & \textbf{Sites Used} & \textbf{Cost (Rs.)} \\ \midrule
+Compostable & 135 & 108 & 13,50,000 \\
+Recyclable  & 172 & 120 & 13,76,000 \\
+General     & 129 &  99 &  7,74,000 \\
+\midrule
+\textbf{Total} & \textbf{436} & --- & \textbf{35,00,000} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The MILP objective value is 93,209 (waste$\cdot$m). The LP relaxation yields an objective of 0 (fractional bins placed at exact demand sites), confirming the integrality gap is entirely due to the discrete placement constraint. The budget is fully utilised (100\%).
+
+% =========================================================================
+\section{Module 3.3: Waste Collection Logistics with Vehicle Segregation}
+\label{sec:mod33}
+% =========================================================================
+
+\subsection{Formulation}
+
+Each waste type has a dedicated vehicle fleet routed to type-appropriate processing facilities.
+
+\paragraph{Decision Variables:}
+\begin{itemize}
+    \item $x_{i,j,t} \ge 0$: kg of waste type $t$ shipped from collection zone $i$ to facility $j$.
+    \item $N_t \in \mathbb{Z}_{\ge 0}$: number of vehicles of type $t$ deployed.
+\end{itemize}
+
+\paragraph{Parameters:}
+
+\begin{table}[H]
+\centering
+\caption{Facilities (Sinks)}
+\begin{tabular}{llrrl}
+\toprule
+\textbf{Facility $j$} & \textbf{Name} & \textbf{$L_j$ (km)} & \textbf{$c^{proc}_j$ (Rs./kg)} & \textbf{Capacity} \\ \midrule
+Biogas    & On-campus Biogas/Compost     & 1   & 0.5  & 500 kg/day \\
+Recycler  & Okhla Recycling Aggregator   & 11  & $-$8.0 (revenue) & Unlimited \\
+Landfill  & Okhla Landfill/WTE           & 12  & 2.0  & Unlimited \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Vehicle Fleet Types}
+\begin{tabular}{llrrr}
+\toprule
+\textbf{Vehicle} & \textbf{Waste Type} & \textbf{Capacity (kg)} & \textbf{$c^{fix}_t$ (Rs./day)} & \textbf{$c^{var}_t$ (Rs./km)} \\ \midrule
+Green Tipper & Compostable & 750 & 600 & 15 \\
+Blue Tipper  & Recyclable  & 750 & 600 & 15 \\
+Grey Tipper  & General     & 500 & 500 & 18 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Waste-to-facility routing: compostable $\to$ \{biogas, landfill\}; recyclable $\to$ \{recycler, landfill\}; general $\to$ \{landfill\}.
+
+\paragraph{Objective:} Minimise total daily logistics cost:
+\begin{equation}
+    \min \; \sum_{t \in \mathcal{T}} \sum_{i} \sum_{j \in \mathcal{F}_t} \left(c^{var}_t \cdot L_j + c^{hdl} + c^{proc}_j\right) x_{i,j,t} \;+\; \sum_t c^{fix}_t \cdot N_t
+\end{equation}
+where $c^{hdl} = 1$~Rs./kg (loading/unloading) and $\mathcal{F}_t$ is the set of facilities accepting type $t$.
+
+\paragraph{Constraints:}
+\begin{align}
+    &\text{(C1) Clearance:} & \sum_{j \in \mathcal{F}_t} x_{i,j,t} &= W_{i,t} \quad &&\forall\, i,\, t \\
+    &\text{(C2) Facility cap:} & \sum_i x_{i,j,t} &\le \text{Cap}_j \quad &&\forall\, j \text{ with finite cap} \\
+    &\text{(C3) Fleet cap:} & \sum_i \sum_{j \in \mathcal{F}_t} x_{i,j,t} &\le Q_t \cdot N_t \quad &&\forall\, t
+\end{align}
+where $Q_t = 2 \times \text{vehicle capacity}_t$ (conservative 2 trips/day).
+
+\subsection{Results: Base Scenario}
+
+\begin{table}[H]
+\centering
+\caption{Optimal Waste Flow Allocation}
+\begin{tabular}{llr}
+\toprule
+\textbf{Waste Type} & \textbf{Destination} & \textbf{Flow (kg/day)} \\ \midrule
+Compostable & On-campus Biogas & 500 \\
+Compostable & Okhla Landfill   & 1,900 \\
+Recyclable  & Okhla Recycler   & 2,400 \\
+General     & Okhla Landfill   & 1,200 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The biogas facility saturates at its 500~kg/day capacity, forcing 1,900~kg of compostable waste to overflow to landfill. This is a key insight: \textbf{on-campus composting capacity is the primary bottleneck}.
+
+Fleet deployment: 2 Green Tippers + 2 Blue Tippers + 2 Grey Tippers = \textbf{6 vehicles}.
+
+\begin{table}[H]
+\centering
+\caption{Cost Breakdown (Base Scenario)}
+\begin{tabular}{lr}
+\toprule
+\textbf{Component} & \textbf{Rs.} \\ \midrule
+Transport + Handling & 10,10,700 \\
+Processing cost      & $-$12,750 (recycling revenue) \\
+Fleet fixed cost     & 3,400 \\
+\midrule
+\textbf{Total}       & \textbf{10,01,350} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Sensitivity Analysis: +20\% Waste}
+
+With a 20\% increase in waste generation (7,200~kg/day), the cost rises by \textbf{21.6\%} to Rs.\,12,17,589. The same 6 vehicles suffice (absorbed by increased trip frequency), but the biogas overflow worsens to 2,380~kg to landfill. This confirms that expanding composting infrastructure would yield the highest marginal benefit.
+
+% =========================================================================
+\section{Module 3.4: Water Refill Station Planning}
+\label{sec:mod34}
+% =========================================================================
+
+\subsection{Formulation}
+
+A \textbf{Capacitated P-Median} problem minimises installation cost plus user walking inconvenience.
+
+\paragraph{Decision Variables:}
+\begin{itemize}
+    \item $y_j \in \{0,1\}$: 1 if a refill station is opened at site $j$, 0 otherwise.
+    \item $x_{i,j} \in [0,1]$: fraction of zone $i$'s water demand assigned to station $j$.
+\end{itemize}
+
+\paragraph{Parameters:}
+\begin{itemize}
+    \item $f = $ Rs.\,1,00,000: installation cost per station.
+    \item $F_i$: footfall at zone $i$ (persons), from gravity model.
+    \item $D_{ij}$: walking distance from zone $i$ to site $j$ (m, Dijkstra).
+    \item $c_w = 0.02$: walking inconvenience cost (Rs./m).
+    \item $Q = 1{,}000$ persons per station (equivalent to 250 LPH at 0.25 L/person/hr).
+\end{itemize}
+
+\paragraph{Objective:}
+\begin{equation}
+    \min \; \sum_j f \cdot y_j + \sum_{i,j} F_i \cdot x_{i,j} \cdot D_{ij} \cdot c_w
+\end{equation}
+
+\paragraph{Subject to:}
+\begin{align}
+    &\sum_j x_{i,j} = 1 \quad \forall\, i &&\text{(all demand satisfied)} \\
+    &\sum_i F_i \cdot x_{i,j} \le Q \cdot y_j \quad \forall\, j &&\text{(station capacity)} \\
+    &x_{i,j} = 0 \;\text{if}\; D_{ij} > 500\text{m} &&\text{(maximum walking distance)}
+\end{align}
+
+\subsection{Solution Method}
+
+Due to the scale of the problem (287 demand zones $\times$ 144 candidate sites at stride 2), a hybrid approach is used:
+\begin{enumerate}
+    \item \textbf{LP Relaxation}: Solved via \texttt{scipy.optimize.linprog} (HiGHS solver) with sparse matrix construction and a top-$K$ ($K=8$) nearest-candidate optimisation per zone. This provides a provable lower bound.
+    \item \textbf{Greedy Heuristic}: A capacity-aware greedy algorithm iteratively opens the station that maximises demand-weighted distance reduction, assigning demand closest-first up to capacity.
+\end{enumerate}
+
+\subsection{Results}
+
+\begin{table}[H]
+\centering
+\caption{Module 3.4 Results}
+\begin{tabular}{lrr}
+\toprule
+& \textbf{LP Relaxation} & \textbf{Greedy (Integer)} \\ \midrule
+Stations          & 29 (fractional) & \textbf{40} \\
+Installation cost & Rs.\,40,00,001  & Rs.\,40,00,000 \\
+Walking cost      & Rs.\,7,416      & Rs.\,60,065 \\
+Total objective   & Rs.\,40,07,417  & Rs.\,40,60,065 \\
+Avg walking dist  & ---             & \textbf{75 m} \\
+Max walking dist  & ---             & 2,492 m \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The \textbf{optimality gap is 1.31\%}, confirming the greedy solution is near-optimal. The minimum number of stations by capacity alone is $\lceil 40{,}000 / 1{,}000 \rceil = 40$, which is exactly what the greedy algorithm finds --- capacity is the binding constraint.
+
+% =========================================================================
+\section{Module 3.5: Integrated Multi-Objective Optimization}
+\label{sec:mod35}
+% =========================================================================
+
+\subsection{Formulation}
+
+This module combines Modules 3.2 (bins), 3.3 (logistics), and 3.4 (stations) into a unified budget-allocation problem.
+
+\paragraph{Decision Variables:}
+\begin{itemize}
+    \item $B_{bin}$: budget allocated to waste bins (Rs.).
+    \item $B_{stn}$: budget allocated to water refill stations (Rs.).
+\end{itemize}
+
+\paragraph{Shared Constraint:}
+\begin{equation}
+    B_{bin} + B_{stn} \le B_{total} = \text{Rs.\,85,00,000 (85 Lakhs)}
+\end{equation}
+
+\paragraph{Three Objectives} (all minimised):
+\begin{itemize}
+    \item $C_{sys}$: Total economic cost = actual bin spend + station spend + logistics cost (Rs.).
+    \item $E_{sys}$: Environmental cost = embodied carbon of bins/stations + CO\textsubscript{2}e from waste processing (kg).
+    \item $I_{sys}$: User inconvenience = aggregate walking distance to nearest bin + nearest station (person$\cdot$m$\cdot$Rs.).
+\end{itemize}
+
+For a given budget split $(B_{bin}, B_{stn})$, the number of bins and stations procurable is determined, and the three objectives are evaluated using surrogate functions calibrated to the exact Module 3.2, 3.3, and 3.4 results.
+
+\paragraph{Weighted-Sum Scalarisation:}
+\begin{equation}
+    \min_{B_{bin},\, B_{stn}} \;\; w_1 \hat{C}_{sys} + w_2 \hat{E}_{sys} + w_3 \hat{I}_{sys} \qquad \text{s.t. } B_{bin} + B_{stn} \le B_{total}
+\end{equation}
+where $\hat{(\cdot)}$ denotes min-max normalised objectives (scaled to $[0,1]$), and $w_1 + w_2 + w_3 = 1$. The weights are swept over the simplex to generate a Pareto frontier. The optimisation is solved via \texttt{scipy.optimize.minimize} (SLSQP method) with multi-start initialisation.
+
+\subsection{Results}
+
+\begin{table}[H]
+\centering
+\caption{Extreme and Balanced Operating Points}
+\begin{tabular}{lrrr}
+\toprule
+& \textbf{Min Cost} & \textbf{Min Inconvenience} & \textbf{Balanced} \\ \midrule
+Weights $(w_1, w_2, w_3)$ & $(1, 0, 0)$ & $(0, 0, 1)$ & $(0.29, 0.31, 0.41)$ \\
+Bins & 404 & 535 & 404 \\
+Stations & 40 & 40 & 40 \\
+$C_{sys}$ (Rs. Lakhs) & 83.9 & 95.0 & 83.9 \\
+$E_{sys}$ (kg CO\textsubscript{2}e) & 6,690 & 7,345 & 6,690 \\
+$I_{sys}$ & 160,657 & 136,026 & 160,657 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Key Insights:}
+\begin{itemize}
+    \item Stations are always at the minimum (40) because the capacity constraint ($Q = 1{,}000$ persons) is tight and the unit cost (Rs.\,1L each) is high.
+    \item Extra budget directed to bins yields diminishing returns on inconvenience reduction due to the inverse relationship between bin count and average walk distance.
+    \item \textbf{Expanding on-campus composting capacity} (currently bottlenecked at 500~kg/day) would shift the entire Pareto frontier favourably by reducing both $E_{sys}$ (less landfill) and $C_{sys}$ (lower transport costs).
+\end{itemize}
+
+% =========================================================================
+\section{Computational Details}
+% =========================================================================
+
+\begin{table}[H]
+\centering
+\caption{Software and Solver Summary}
+\begin{tabular}{llll}
+\toprule
+\textbf{Module} & \textbf{Problem Type} & \textbf{Solver} & \textbf{Time} \\ \midrule
+3.1 & Bounded NLP & SciPy L-BFGS-B / minimize\_scalar & $< 1$s \\
+3.2 & MILP (FLP) & PuLP + CBC & $\sim$25s \\
+3.3 & LP/MILP (MCF) & PuLP + CBC & $< 1$s \\
+3.4 (LP) & LP relaxation & SciPy linprog (HiGHS) & $< 1$s \\
+3.4 (Int) & Greedy heuristic & Custom Python & $\sim$2s \\
+3.5 & NLP (weighted sum) & SciPy SLSQP (multi-start) & $< 2$s \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+All code is written in Python 3.14 using \texttt{numpy}, \texttt{pandas}, \texttt{scipy}, \texttt{pulp}, \texttt{folium}, and \texttt{matplotlib}. The repository contains:
+
+\begin{itemize}
+    \item \texttt{grid\_generation.py}: Geospatial pipeline (Steps 1--4).
+    \item \texttt{footfall\_estimation.py}: Gravity model for footfall and waste.
+    \item \texttt{Module\_3\_X/module\_3\_X\_solver.py}: Solver for each module.
+    \item \texttt{grid\_data/}: All generated spatial data (CSV, GeoJSON, HTML maps).
+\end{itemize}
+
+% =========================================================================
+\section{Conclusion}
+% =========================================================================
+
+This project presents an integrated, spatially-resolved optimization framework for sustainable festival infrastructure planning. The key contributions and findings are:
+
+\begin{enumerate}
+    \item \textbf{Geospatial foundation}: Real walking distances via Dijkstra on OSM, not Euclidean --- ensuring physically meaningful coverage and service constraints.
+    \item \textbf{3-type waste segregation}: Separate bins (compostable/recyclable/general), separate vehicles (Green/Blue/Grey Tippers), and type-specific facility routing.
+    \item \textbf{Biogas bottleneck identified}: On-campus composting capacity (500~kg/day) is severely undersized for the 2,400~kg/day compostable waste stream, forcing 79\% to landfill. Expanding this is the single highest-impact investment.
+    \item \textbf{Near-optimal heuristics}: Module 3.4's greedy solution achieves a 1.31\% gap versus the LP relaxation, validating the approach for large-scale instances.
+    \item \textbf{Budget allocation}: The Pareto analysis (Module 3.5) shows that the minimum-cost and minimum-environment solutions coincide --- investing in the right number of bins reduces both cost and CO\textsubscript{2}e simultaneously.
+\end{enumerate}
+
+The recommended operating point: \textbf{436 waste bins} (3 types, Rs.\,35L), \textbf{40 water stations} (Rs.\,40L), \textbf{6 segregated vehicles} (Rs.\,10L/day operational), for a total system cost of approximately \textbf{Rs.\,85 Lakhs capital + Rs.\,10 Lakhs/day operational}.
+
+\begin{thebibliography}{99}
+
+\bibitem{bettencourt2007}
+Bettencourt, L.M.A., Lobo, J., Helbing, D., K\"uhnert, C. \& West, G.B. (2007).
+Growth, innovation, scaling, and the pace of life in cities.
+\textit{PNAS}, 104(17), 7301--7306.
+
+\bibitem{cea2024}
+Central Electricity Authority (2024).
+CO\textsubscript{2} Baseline Database for the Indian Power Sector, Version 20.0.
+Ministry of Power, Government of India.
+
+\bibitem{cpcb2021}
+Central Pollution Control Board (2021).
+Annual Report on Municipal Solid Waste Management.
+MoEF\&CC, Government of India.
+
+\bibitem{agf2022}
+Sherburn, M. et al. (2022).
+``The Show Must Go On'' --- 2022 Event Industry GHG Emissions Report.
+A Greener Future (AGF).
+
+\bibitem{prakash2025}
+Prakash, O. (2025).
+\textit{Course Lecture Notes: Project Details}, CLL782, IIT Delhi.
+
+\bibitem{daskin2013}
+Daskin, M.S. (2013).
+\textit{Network and Discrete Location}, 2nd ed. Wiley.
+
+\bibitem{hakimi1964}
+Hakimi, S.L. (1964).
+Optimum locations of switching centers and the absolute centers and medians of a graph.
+\textit{Operations Research}, 12(3), 450--459.
+
+\end{thebibliography}
+
+\end{document}
